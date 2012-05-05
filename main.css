@@ -11,3 +11,7 @@
 #tiles img {
     float:left;
 }
+
+progress {
+    width:500px;
+}

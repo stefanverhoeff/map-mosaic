@@ -6,6 +6,7 @@
     var height = 8;
     var canvasEnabled = $('#enableCanvas').attr('checked');
     var domEnabled = $('#enableDom').attr('checked');
+    var tilesTotal, tilesLoaded, tiles;
 
     var canvas = document.getElementById('mapCanvas');
     var ctx = canvas.getContext('2d');
@@ -45,24 +46,10 @@
         $('#mapContainer').show();
     };
 
-    function renderTiles(x, y) {
-        for (x = 0; x < width; ++x) {
-            for (y = 0; y < height; ++y) {
-                var tile = getTile(15, 17600 + getRandomInt(-50, 50), 10750 + getRandomInt(-50, 50));
-
-                if (domEnabled) {
-                    renderTileDom(tile, forceTileSize);
-                }
-
-                if (canvasEnabled) {
-                    renderTileCanvas(tile, forceTileSize, x, y);
-                }
-            }
-        }
-    }
-
     var initTiles = function () {
-        var x, y;
+        tilesTotal = width * height;
+        tilesLoaded = 0;
+        tiles = [];
 
         $('#tiles').empty();
 
@@ -84,7 +71,37 @@
             $('#mapCanvas').hide();
         }
 
-        renderTiles(x, y);
+        renderTiles();
+    };
+
+    var renderTiles = function () {
+        var x, y;
+
+        for (x = 0; x < width; ++x) {
+            for (y = 0; y < height; ++y) {
+                var tileUrl = getTileUrl(15, 17600 + getRandomInt(-50, 50), 10750 + getRandomInt(-50, 50));
+                var tile;
+
+                if (domEnabled) {
+                    renderTileDom(tileUrl, forceTileSize);
+                }
+
+                if (canvasEnabled) {
+                    tile = fetchTile(tileUrl);
+                    tiles.push(tile);
+                }
+            }
+        }
+
+        waitForTilesRendered(function () {
+            var i, x, y;
+//            sortTilesByColor();
+            for (i=0; i < tiles.length; ++i) {
+                x = i % width;
+                y = i - x*width;
+                renderTileCanvas(tile, forceTileSize, x, y);
+            }
+        });
     };
 
     var renderTileDom = function (url, size) {
@@ -94,6 +111,13 @@
                 width:size,
                 height:size
             });
+    };
+
+    var renderTileCanvas = function (tile, tileSize, x, y) {
+        var left = x * tileSize;
+        var top = y * tileSize;
+
+        ctx.drawImage(tile.image, left, top, tileSize, tileSize);
     };
 
     var fetchTile = function (url) {
@@ -112,27 +136,31 @@
             scratchCtx.drawImage(this, 0, 0);
             sum = 0;
 
-            for (x=0; x < this.width; ++x) {
-                for (y=0; y < this.height; ++y) {
+            for (x = 0; x < this.width; ++x) {
+                for (y = 0; y < this.height; ++y) {
                     pixel = scratchCtx.getImageData(x, y, 1, 1);
-                    sum += (pixel.data[0] + pixel.data[1] + pixel.data[2])/3.0;
+                    sum += (pixel.data[0] + pixel.data[1] + pixel.data[2]) / 3.0;
                 }
             }
             tile.avgColor = sum / (this.width * this.height);
+
+            tilesLoaded++;
+            updateProgress(tilesLoaded, tilesTotal);
         };
 
         return tile;
     };
 
-    var renderTileCanvas = function (url, tileSize, x, y) {
-        var left = x * tileSize;
-        var top = y * tileSize;
-        var tile = fetchTile(url);
-
-        ctx.drawImage(tile.image, left, top, tileSize, tileSize);
+    var waitForTilesRendered = function (callback) {
+        var waitHandle = setInterval(function () {
+            if (tilesLoaded === tilesTotal) {
+                clearInterval(waitHandle);
+                callback();
+            }
+        }, 100);
     };
 
-    var getTile = function (zoom, x, y) {
+    var getTileUrl = function (zoom, x, y) {
         var url;
         zoom = zoom || 15;
         x = x || 17600;
@@ -140,6 +168,13 @@
 
         url = "/map-tiles/newest/satellite.day/" + zoom + "/" + x + "/" + y + "/128/png8?token=" + token + "&app_id=" + appId;
         return url;
+    };
+
+    var updateProgress = function (loaded, total) {
+        $('progress')[0].value = loaded;
+        $('progress')[0].max = total;
+        $('#tiles-loaded').text(loaded);
+        $('#tiles-total').text(total);
     };
 
     initHandlers();

@@ -12,11 +12,16 @@
 
 <div id="tools">
     <label>
-        <input type="checkbox" id="enableDom" /> Dom
+        <input type="checkbox" id="enableDom"/> Dom
     </label>
     <label>
-        <input type="checkbox" id="enableCanvas" checked /> Canvas
+        <input type="checkbox" id="enableCanvas" checked/> Canvas
     </label>
+
+    <div id="status">
+        <progress></progress>
+        <span id="tiles-loaded"></span> / <span id="tiles-total"></span>
+    </div>
 </div>
 
 <div id="mapContainer">
@@ -26,7 +31,7 @@
 
 </div>
 
-<br /><br />
+<br/><br/>
 
 <canvas id="mapCanvas">
 </canvas>
