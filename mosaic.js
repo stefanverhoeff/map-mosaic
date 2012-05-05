@@ -39,7 +39,7 @@
 
             values.sort();
 
-            return values[Math.floor(values.length/2)];
+            return values[Math.floor(values.length / 2)];
         },
         calcAvgRed:function (data) {
             return rankingFuncs.calcBySum(data, function (data, index) {
@@ -148,10 +148,6 @@
                 var tileUrl = getTileUrl(15, 17640 + util.getRandomInt(-100, 100), 10755 + util.getRandomInt(-100, 100));
                 var tile;
 
-                if (domEnabled) {
-                    renderTileDom(tileUrl, forceTileSize);
-                }
-
                 if (canvasEnabled) {
                     tile = fetchTile(tileUrl);
                     tiles.push(tile);
@@ -162,10 +158,9 @@
         waitForTilesRendered(sortAndRenderTilesCanvas);
     };
 
-    var renderTileDom = function (url, size) {
-        $('#tiles').append('<img />')
+    var renderTileDom = function (tile, size) {
+        $('#tiles').append(tile.image)
             .children().last().attr({
-                src:url,
                 width:size,
                 height:size
             });
@@ -179,6 +174,10 @@
             y = Math.floor(i / width);
             x = i - y * width;
             renderTileCanvas(tiles[i], forceTileSize, x, y);
+
+            if (domEnabled) {
+                renderTileDom(tiles[i], forceTileSize);
+            }
         }
     };
 
