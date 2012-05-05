@@ -108,7 +108,7 @@
 
         for (x = 0; x < width; ++x) {
             for (y = 0; y < height; ++y) {
-                var tileUrl = getTileUrl(15, 17600 + getRandomInt(-50, 50), 10750 + getRandomInt(-50, 50));
+                var tileUrl = getTileUrl(15, 17640 + getRandomInt(-100, 100), 10755 + getRandomInt(-100, 100));
                 var tile;
 
                 if (domEnabled) {
@@ -159,6 +159,10 @@
         tile.image.src = url;
         tile.image.onload = function () {
             calcTileRanking(tile);
+        };
+        tile.image.onerror = function () {
+            tilesLoaded++;
+            updateProgress(tilesLoaded, tilesTotal);
         };
 
         return tile;
