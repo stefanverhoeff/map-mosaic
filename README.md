@@ -12,6 +12,7 @@ Planning to use:
 Todo:
 X- Github
 X- Fetch tiles
+  - Load balance between domains
 X- Load in canvas
 X - Need x-origin proxy?
 - try sort by hue

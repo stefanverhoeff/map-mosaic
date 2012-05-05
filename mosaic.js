@@ -97,9 +97,9 @@
             var i, x, y;
 //            sortTilesByColor();
             for (i=0; i < tiles.length; ++i) {
-                x = i % width;
-                y = i - x*width;
-                renderTileCanvas(tile, forceTileSize, x, y);
+                x = Math.floor(i / height);
+                y = i - x*height;
+                renderTileCanvas(tiles[i], forceTileSize, x, y);
             }
         });
     };
