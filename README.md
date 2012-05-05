@@ -10,14 +10,19 @@ Planning to use:
 - Nokia Map API api.maps.nokia.com
 
 Todo:
-- Github
-- Fetch tiles
-- Load in canvas
-- Need x-origin proxy?
+X- Github
+X- Fetch tiles
+X- Load in canvas
+X - Need x-origin proxy?
+- try sort by hue
+- Slice partial tiles
 - Algorithm for matching iomage
   - Calc average color
   - Detect shapes?
   - Greyscales values / hue
+- Need cache for rendered tiles
+  - Local script
+  - Or browser + localStorage?
 - Upload & read image
   - Frontend? Canvas?
 - Display image

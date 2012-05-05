@@ -45,6 +45,22 @@
         $('#mapContainer').show();
     };
 
+    function renderTiles(x, y) {
+        for (x = 0; x < width; ++x) {
+            for (y = 0; y < height; ++y) {
+                var tile = getTile(15, 17600 + getRandomInt(-50, 50), 10750 + getRandomInt(-50, 50));
+
+                if (domEnabled) {
+                    renderTileDom(tile, forceTileSize);
+                }
+
+                if (canvasEnabled) {
+                    renderTileCanvas(tile, forceTileSize, x, y);
+                }
+            }
+        }
+    }
+
     var initTiles = function () {
         var x, y;
 
@@ -68,19 +84,7 @@
             $('#mapCanvas').hide();
         }
 
-        for (x = 0; x < width; ++x) {
-            for (y = 0; y < height; ++y) {
-                var tile = getTile(15, 17600 + getRandomInt(-50, 50), 10750 + getRandomInt(-50, 50));
-
-                if (domEnabled) {
-                    renderTileDom(tile, forceTileSize);
-                }
-
-                if (canvasEnabled) {
-                    renderTileCanvas(tile, forceTileSize, x, y);
-                }
-            }
-        }
+        renderTiles(x, y);
     };
 
     var renderTileDom = function (url, size) {
@@ -94,8 +98,14 @@
 
     var renderTileCanvas = function (url, tileSize, x, y) {
         var image = new Image();
+        var left = x * tileSize;
+        var top = y * tileSize;
+        var pixel;
+
         image.onload = function () {
-            ctx.drawImage(image, x * tileSize, y * tileSize, tileSize, tileSize);
+            ctx.drawImage(image, left, top, tileSize, tileSize);
+            pixel = ctx.getImageData(left, top, 1, 1);
+            console.log(" data at " + left + "," + top, pixel);
         };
         image.src = url;
     };
@@ -106,7 +116,7 @@
         x = x || 17600;
         y = y || 10750;
 
-        url = "http://4.maptile.lbs.ovi.com/maptiler/v2/maptile/newest/satellite.day/" + zoom + "/" + x + "/" + y + "/128/png8?token=" + token + "&app_id=" + appId;
+        url = "/map-tiles/newest/satellite.day/" + zoom + "/" + x + "/" + y + "/128/png8?token=" + token + "&app_id=" + appId;
         return url;
     };
 
