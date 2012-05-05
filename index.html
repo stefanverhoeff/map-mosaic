@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; 
+        charset=UTF-8"/>
+    <title>Nokia Maps API Example</title>
+    <script src="http://api.maps.nokia.com/2.2.0/jsl.js"
+            type="text/javascript" charset="utf-8"></script>
+    <script src="jquery-1.7.2.min.js"
+            type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+<h1>Map Mosaic</h1>
+
+<div id="mapContainer" style="width:600px; height:400px;">
+</div>
+
+<script type="text/javascript">
+    (function () {
+        // Set up is the credentials to use the API:
+        nokia.Settings.set("appId", "ayTdeMpluq0EkCHDIplm");
+        nokia.Settings.set("authenticationToken", "SxHxfkhbfzGOzF2AeBZTnQ");
+
+        var map = new nokia.maps.map.Display(
+                document.getElementById("mapContainer"), {
+                    // Zoom level for the map
+                    'zoomLevel':10,
+                    // Map center coordinates
+                    'center':[52.51, 13.4],
+                    components:[
+                        // Behavior collection
+                        new nokia.maps.map.component.Behavior(),
+                        new nokia.maps.map.component.ZoomBar(),
+                        new nokia.maps.map.component.Overview(),
+                        new nokia.maps.map.component.TypeSelector(),
+                        new nokia.maps.map.component.ScaleBar() ],
+
+                });
+        map.set("baseMapType", nokia.maps.map.Display.SATELLITE);
+
+    })();
+</script>
+</body>
+</html>
