@@ -1,9 +1,26 @@
 (function () {
     var appId = "ayTdeMpluq0EkCHDIplm";
     var token = "SxHxfkhbfzGOzF2AeBZTnQ";
-    var forceTileSize = 32;
-    var width = 32;
-    var height = 16;
+    var forceTileSize = 64;
+    var width = 16;
+    var height = 8;
+    var canvasEnabled = true;
+    var domEnabled = false;
+
+    var canvas = document.getElementById('mapCanvas');
+    var ctx = canvas.getContext('2d');
+
+    var initHandlers = function () {
+        $('#enableCanvas').click(function () {
+            canvasEnabled = this.checked;
+            initTiles();
+        });
+        $('#enableDom').click(function () {
+            domEnabled = this.checked;
+            console.log(domEnabled);
+            initTiles();
+        });
+    };
 
     var initMap = function () {
         // Set up is the credentials to use the API:
@@ -32,18 +49,49 @@
     var initTiles = function (width, height) {
         var x, y;
 
+        $('#tiles').empty();
+
         for (x = 0; x < width; ++x) {
             for (y = 0; y < height; ++y) {
-                $('#tiles').append('<img />')
-                    .children().last().attr({
-                        src: getTile(15, 17600 + getRandomInt(-50, 50), 10750 + getRandomInt(-50, 50)),
-                        width: forceTileSize,
-                        height: forceTileSize
-                    });
+                if (domEnabled) {
+                    renderTileDom(getTile(15, 17600 + getRandomInt(-50, 50), 10750 + getRandomInt(-50, 50))
+                        , forceTileSize);
+                }
+
+                if (canvasEnabled) {
+                    renderTileCanvas(getTile(15, 17600 + getRandomInt(-50, 50), 10750 + getRandomInt(-50, 50))
+                        , forceTileSize, x, y);
+                }
             }
         }
 
-        $('#tiles').width(width * forceTileSize);
+        if (domEnabled) {
+            $('#tiles').width(width * forceTileSize);
+            $('#tiles').height(height * forceTileSize);
+        }
+
+        if (canvasEnabled) {
+            $('#mapCanvas').width(width * forceTileSize);
+            $('#mapCanvas').width(height * forceTileSize);
+        }
+    };
+
+    var renderTileDom = function (url, size) {
+        $('#tiles').append('<img />')
+            .children().last().attr({
+                src:url,
+                width:size,
+                height:size
+            });
+    };
+
+    var renderTileCanvas = function (url, tileSize, x, y) {
+        var image = new Image();
+        image.onload = function () {
+            var size = tileSize / 2;
+            ctx.drawImage(image, x * size, y * size, size / 2, size / 2);
+        };
+        image.src = url;
     };
 
     var getTile = function (zoom, x, y) {
@@ -56,6 +104,7 @@
         return url;
     };
 
+    initHandlers();
 //    initMap();
     initTiles(width, height);
 

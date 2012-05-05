@@ -10,12 +10,26 @@
 <body>
 <h1>Map Mosaic</h1>
 
+<div id="tools">
+    <label>
+        <input type="checkbox" id="enableDom" /> Dom
+    </label>
+    <label>
+        <input type="checkbox" id="enableCanvas" checked /> Canvas
+    </label>
+</div>
+
 <div id="mapContainer">
 </div>
 
 <div id="tiles">
 
 </div>
+
+<br /><br />
+
+<canvas id="mapCanvas">
+</canvas>
 
 <script src="http://api.maps.nokia.com/2.2.0/jsl.js" type="text/javascript" charset="utf-8"></script>
 <script src="jquery-1.7.2.min.js" type="text/javascript" charset="utf-8"></script>

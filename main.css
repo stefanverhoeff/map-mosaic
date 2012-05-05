@@ -4,6 +4,10 @@
     height: 400px;
 }
 
+#tiles, #mapCanvas {
+    border: 3px solid black;
+}
+
 #tiles img {
     float:left;
 }
