@@ -34,4 +34,4 @@ Registration api.map.nokia.com
 
 Name: MapMosaic
 App ID: ayTdeMpluq0EkCHDIplm
-Token/ AppCode: SxHxfkhbfzGOzF2AeBZTnQ
+Token/AppCode: SxHxfkhbfzGOzF2AeBZTnQ

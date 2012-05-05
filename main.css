@@ -1,4 +1,13 @@
 #mapContainer {
+    display: none;
     width: 600px;
     height: 400px;
+}
+
+#tiles {
+    width:1536px;
+}
+
+#tiles img {
+    float:left;
 }
