@@ -4,8 +4,8 @@
     var forceTileSize = 64;
     var width = 16;
     var height = 8;
-    var canvasEnabled = true;
-    var domEnabled = false;
+    var canvasEnabled = $('#enableCanvas').attr('checked');
+    var domEnabled = $('#enableDom').attr('checked');
 
     var canvas = document.getElementById('mapCanvas');
     var ctx = canvas.getContext('2d');
@@ -17,7 +17,6 @@
         });
         $('#enableDom').click(function () {
             domEnabled = this.checked;
-            console.log(domEnabled);
             initTiles();
         });
     };
@@ -46,33 +45,41 @@
         $('#mapContainer').show();
     };
 
-    var initTiles = function (width, height) {
+    var initTiles = function () {
         var x, y;
 
         $('#tiles').empty();
 
-        for (x = 0; x < width; ++x) {
-            for (y = 0; y < height; ++y) {
-                if (domEnabled) {
-                    renderTileDom(getTile(15, 17600 + getRandomInt(-50, 50), 10750 + getRandomInt(-50, 50))
-                        , forceTileSize);
-                }
-
-                if (canvasEnabled) {
-                    renderTileCanvas(getTile(15, 17600 + getRandomInt(-50, 50), 10750 + getRandomInt(-50, 50))
-                        , forceTileSize, x, y);
-                }
-            }
-        }
-
         if (domEnabled) {
             $('#tiles').width(width * forceTileSize);
             $('#tiles').height(height * forceTileSize);
+            $('#tiles').show();
+        }
+        else {
+            $('#tiles').hide();
         }
 
         if (canvasEnabled) {
-            $('#mapCanvas').width(width * forceTileSize);
-            $('#mapCanvas').width(height * forceTileSize);
+            $('#mapCanvas')[0].width = (width * forceTileSize);
+            $('#mapCanvas')[0].height = (height * forceTileSize);
+            $('#mapCanvas').show();
+        }
+        else {
+            $('#mapCanvas').hide();
+        }
+
+        for (x = 0; x < width; ++x) {
+            for (y = 0; y < height; ++y) {
+                var tile = getTile(15, 17600 + getRandomInt(-50, 50), 10750 + getRandomInt(-50, 50));
+
+                if (domEnabled) {
+                    renderTileDom(tile, forceTileSize);
+                }
+
+                if (canvasEnabled) {
+                    renderTileCanvas(tile, forceTileSize, x, y);
+                }
+            }
         }
     };
 
@@ -88,8 +95,7 @@
     var renderTileCanvas = function (url, tileSize, x, y) {
         var image = new Image();
         image.onload = function () {
-            var size = tileSize / 2;
-            ctx.drawImage(image, x * size, y * size, size / 2, size / 2);
+            ctx.drawImage(image, x * tileSize, y * tileSize, tileSize, tileSize);
         };
         image.src = url;
     };
@@ -106,6 +112,6 @@
 
     initHandlers();
 //    initMap();
-    initTiles(width, height);
+    initTiles();
 
 })();
