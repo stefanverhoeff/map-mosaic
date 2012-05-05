@@ -18,6 +18,20 @@
         <input type="checkbox" id="enableCanvas" checked/> Canvas
     </label>
 
+    <br/><br/>
+    <label>
+        <input type="radio" name="algorithm" class="algorithm" value="calcAvgColor" checked/> Average total
+    </label>
+    <label>
+        <input type="radio" name="algorithm" class="algorithm" value="calcAvgRed"/> Average red
+    </label>
+    <label>
+        <input type="radio" name="algorithm" class="algorithm" value="calcAvgGreen"/> Average green
+    </label>
+    <label>
+        <input type="radio" name="algorithm" class="algorithm" value="calcAvgBlue"/> Average blue
+    </label>
+
     <div id="status">
         <progress></progress>
         <span id="tiles-loaded"></span> / <span id="tiles-total"></span>

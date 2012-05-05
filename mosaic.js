@@ -2,11 +2,28 @@
     var appId = "ayTdeMpluq0EkCHDIplm";
     var token = "SxHxfkhbfzGOzF2AeBZTnQ";
     var forceTileSize = 64;
-    var width = 16;
-    var height = 9;
+    var width = 7;
+    var height = 7;
     var canvasEnabled = $('#enableCanvas').attr('checked');
     var domEnabled = $('#enableDom').attr('checked');
     var tilesTotal, tilesLoaded, tiles;
+
+    var rankingFuncs = {
+        calcAvgColor:function (pixel) {
+            return (pixel.data[0] + pixel.data[1] + pixel.data[2]) / 3.0;
+        },
+        calcAvgRed:function (pixel) {
+            return pixel.data[0];
+        },
+        calcAvgGreen:function (pixel) {
+            return pixel.data[1];
+        },
+        calcAvgBlue:function (pixel) {
+            return pixel.data[2];
+        }
+    };
+
+    var rankingFunc = rankingFuncs.calcAvgColor;
 
     var canvas = document.getElementById('mapCanvas');
     var ctx = canvas.getContext('2d');
@@ -16,9 +33,21 @@
             canvasEnabled = this.checked;
             initTiles();
         });
+
         $('#enableDom').click(function () {
             domEnabled = this.checked;
             initTiles();
+        });
+
+        $('input[name=algorithm]').click(function () {
+            rankingFunc = rankingFuncs[this.value];
+
+            tilesLoaded = 0;
+            for (i = 0; i < tiles.length; ++i) {
+                calcTileRanking(tiles[i]);
+            }
+
+            sortAndRenderTilesCanvas();
         });
     };
 
@@ -93,16 +122,7 @@
             }
         }
 
-        waitForTilesRendered(function () {
-            var i, x, y;
-            sortTilesByColor();
-
-            for (i = 0; i < tiles.length; ++i) {
-                y = Math.floor(i / width);
-                x = i - y * width;
-                renderTileCanvas(tiles[i], forceTileSize, x, y);
-            }
-        });
+        waitForTilesRendered(sortAndRenderTilesCanvas);
     };
 
     var renderTileDom = function (url, size) {
@@ -112,6 +132,17 @@
                 width:size,
                 height:size
             });
+    };
+
+    var sortAndRenderTilesCanvas = function () {
+        var i, x, y;
+        sortTilesByColor();
+
+        for (i = 0; i < tiles.length; ++i) {
+            y = Math.floor(i / width);
+            x = i - y * width;
+            renderTileCanvas(tiles[i], forceTileSize, x, y);
+        }
     };
 
     var renderTileCanvas = function (tile, tileSize, x, y) {
@@ -127,33 +158,33 @@
 
         tile.image.src = url;
         tile.image.onload = function () {
-            var data, sum, x, y;
-            var scratchCanvas, scratchCtx;
-
-            scratchCanvas = $('<canvas></canvas>')[0];
-            scratchCanvas.width = this.width;
-            scratchCanvas.height = this.height;
-            scratchCtx = scratchCanvas.getContext('2d');
-            scratchCtx.drawImage(this, 0, 0);
-            sum = 0;
-
-            for (x = 0; x < this.width; ++x) {
-                for (y = 0; y < this.height; ++y) {
-                    pixel = scratchCtx.getImageData(x, y, 1, 1);
-                    sum += calcAvgColor(pixel);
-                }
-            }
-            tile.avgColor = sum / (this.width * this.height);
-
-            tilesLoaded++;
-            updateProgress(tilesLoaded, tilesTotal);
+            calcTileRanking(tile);
         };
 
         return tile;
     };
 
-    var calcAvgColor = function (pixel) {
-        return (pixel.data[0] + pixel.data[1] + pixel.data[2]) / 3.0;
+    var calcTileRanking = function (tile) {
+        var sum, x, y;
+        var scratchCanvas, scratchCtx;
+
+        scratchCanvas = $('<canvas></canvas>')[0];
+        scratchCanvas.width = tile.image.width;
+        scratchCanvas.height = tile.image.height;
+        scratchCtx = scratchCanvas.getContext('2d');
+        scratchCtx.drawImage(tile.image, 0, 0);
+        sum = 0;
+
+        for (x = 0; x < tile.image.width; ++x) {
+            for (y = 0; y < tile.image.height; ++y) {
+                pixel = scratchCtx.getImageData(x, y, 1, 1);
+                sum += rankingFunc(pixel);
+            }
+        }
+        tile.avgColor = sum / (tile.image.width * tile.image.height);
+
+        tilesLoaded++;
+        updateProgress(tilesLoaded, tilesTotal);
     };
 
     var waitForTilesRendered = function (callback) {

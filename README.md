@@ -17,7 +17,7 @@ X- Load in canvas
 X - Need x-origin proxy?
 X- try sort by hue
 - Slice partial tiles
-- Algorithm for matching iomage
+- Algorithm for matching image
 X  - Calc average color
   - Closest match for r-g-b values
   - Detect shapes?
