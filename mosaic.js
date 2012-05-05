@@ -96,18 +96,40 @@
             });
     };
 
+    var fetchTile = function (url) {
+        var tile = {};
+        tile.image = new Image();
+
+        tile.image.src = url;
+        tile.image.onload = function () {
+            var data, sum, x, y;
+            var scratchCanvas, scratchCtx;
+
+            scratchCanvas = $('<canvas></canvas>')[0];
+            scratchCanvas.width = this.width;
+            scratchCanvas.height = this.height;
+            scratchCtx = scratchCanvas.getContext('2d');
+            scratchCtx.drawImage(this, 0, 0);
+            sum = 0;
+
+            for (x=0; x < this.width; ++x) {
+                for (y=0; y < this.height; ++y) {
+                    pixel = scratchCtx.getImageData(x, y, 1, 1);
+                    sum += (pixel.data[0] + pixel.data[1] + pixel.data[2])/3.0;
+                }
+            }
+            tile.avgColor = sum / (this.width * this.height);
+        };
+
+        return tile;
+    };
+
     var renderTileCanvas = function (url, tileSize, x, y) {
-        var image = new Image();
         var left = x * tileSize;
         var top = y * tileSize;
-        var pixel;
+        var tile = fetchTile(url);
 
-        image.onload = function () {
-            ctx.drawImage(image, left, top, tileSize, tileSize);
-            pixel = ctx.getImageData(left, top, 1, 1);
-            console.log(" data at " + left + "," + top, pixel);
-        };
-        image.src = url;
+        ctx.drawImage(tile.image, left, top, tileSize, tileSize);
     };
 
     var getTile = function (zoom, x, y) {
