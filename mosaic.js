@@ -3,7 +3,7 @@
     var token = "SxHxfkhbfzGOzF2AeBZTnQ";
     var forceTileSize = 64;
     var width = 16;
-    var height = 8;
+    var height = 9;
     var canvasEnabled = $('#enableCanvas').attr('checked');
     var domEnabled = $('#enableDom').attr('checked');
     var tilesTotal, tilesLoaded, tiles;
@@ -95,10 +95,11 @@
 
         waitForTilesRendered(function () {
             var i, x, y;
-//            sortTilesByColor();
-            for (i=0; i < tiles.length; ++i) {
+            sortTilesByColor();
+
+            for (i = 0; i < tiles.length; ++i) {
                 x = Math.floor(i / height);
-                y = i - x*height;
+                y = i - x * height;
                 renderTileCanvas(tiles[i], forceTileSize, x, y);
             }
         });
@@ -139,7 +140,7 @@
             for (x = 0; x < this.width; ++x) {
                 for (y = 0; y < this.height; ++y) {
                     pixel = scratchCtx.getImageData(x, y, 1, 1);
-                    sum += (pixel.data[0] + pixel.data[1] + pixel.data[2]) / 3.0;
+                    sum += calcAvgColor(pixel);
                 }
             }
             tile.avgColor = sum / (this.width * this.height);
@@ -151,6 +152,10 @@
         return tile;
     };
 
+    var calcAvgColor = function (pixel) {
+        return (pixel.data[0] + pixel.data[1] + pixel.data[2]) / 3.0;
+    };
+
     var waitForTilesRendered = function (callback) {
         var waitHandle = setInterval(function () {
             if (tilesLoaded === tilesTotal) {
@@ -160,13 +165,22 @@
         }, 100);
     };
 
+    var sortTilesByColor = function () {
+        tiles.sort(function (a, b) {
+            return a.avgColor - b.avgColor;
+        });
+    };
+
     var getTileUrl = function (zoom, x, y) {
-        var url;
+        var url, server;
+
         zoom = zoom || 15;
         x = x || 17600;
         y = y || 10750;
 
-        url = "/map-tiles/newest/satellite.day/" + zoom + "/" + x + "/" + y + "/128/png8?token=" + token + "&app_id=" + appId;
+        server = getRandomInt(1, 4);
+
+        url = "/map-tiles-" + server + "/newest/satellite.day/" + zoom + "/" + x + "/" + y + "/128/png8?token=" + token + "&app_id=" + appId;
         return url;
     };
 

@@ -12,21 +12,23 @@ Planning to use:
 Todo:
 X- Github
 X- Fetch tiles
-  - Load balance between domains
+X  - Load balance between domains
 X- Load in canvas
 X - Need x-origin proxy?
-- try sort by hue
+X- try sort by hue
 - Slice partial tiles
 - Algorithm for matching iomage
-  - Calc average color
+X  - Calc average color
+  - Closest match for r-g-b values
   - Detect shapes?
   - Greyscales values / hue
-- Need cache for rendered tiles
+  - Alpha-blend with uploaded image
+- Need cache for rendered tiles?
   - Local script
   - Or browser + localStorage?
 - Upload & read image
   - Frontend? Canvas?
-- Display image
+- Display uploaded image
 - Use map api to display, zoomable tiles
 - Pick bounding box for tiles
   - Random planet
