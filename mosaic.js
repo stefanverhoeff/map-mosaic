@@ -43,17 +43,17 @@
         },
         calcAvgRed:function (data) {
             return rankingFuncs.calcBySum(data, function (data, index) {
-                return data[index];
+                return data[index] - (data[index + 1] + data[index + 2]) / 2;
             });
         },
         calcAvgGreen:function (data) {
             return rankingFuncs.calcBySum(data, function (data, index) {
-                return data[index + 1];
+                return data[index + 1] - (data[index] + data[index + 2]) / 2;
             });
         },
         calcAvgBlue:function (data) {
             return rankingFuncs.calcBySum(data, function (data, index) {
-                return data[index + 2];
+                return data[index + 2] - (data[index] + data[index + 1]) / 2;
             });
         }
     };
@@ -143,15 +143,17 @@
     var renderTiles = function () {
         var x, y;
 
+        if (! canvasEnabled && ! domEnabled) {
+            return;
+        }
+
         for (x = 0; x < width; ++x) {
             for (y = 0; y < height; ++y) {
                 var tileUrl = getTileUrl(15, 17640 + util.getRandomInt(-100, 100), 10755 + util.getRandomInt(-100, 100));
                 var tile;
 
-                if (canvasEnabled) {
-                    tile = fetchTile(tileUrl);
-                    tiles.push(tile);
-                }
+                tile = fetchTile(tileUrl);
+                tiles.push(tile);
             }
         }
 
@@ -173,7 +175,10 @@
         for (i = 0; i < tiles.length; ++i) {
             y = Math.floor(i / width);
             x = i - y * width;
-            renderTileCanvas(tiles[i], forceTileSize, x, y);
+
+            if (canvasEnabled) {
+                renderTileCanvas(tiles[i], forceTileSize, x, y);
+            }
 
             if (domEnabled) {
                 renderTileDom(tiles[i], forceTileSize);
