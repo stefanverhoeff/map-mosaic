@@ -4,8 +4,8 @@
     var appId = "ayTdeMpluq0EkCHDIplm";
     var token = "SxHxfkhbfzGOzF2AeBZTnQ";
     var forceTileSize = 64;
-    var width = 7;
-    var height = 7;
+    var width = 16;
+    var height = 9;
     var canvasEnabled = $('#enableCanvas').attr('checked');
     var domEnabled = $('#enableDom').attr('checked');
     var tilesTotal, tilesLoaded, tiles;
@@ -29,6 +29,17 @@
             return rankingFuncs.calcBySum(data, function (data, index) {
                 return (data[index] + data[index + 1] + data[index + 2]) / 3.0;
             });
+        },
+        calcMedianColor:function (data) {
+            var i, values = [];
+
+            for (i = 0; i < data.length; i += 4) {
+                values.push((data[i] + data[i + 1] + data[i + 2]) / 3.0);
+            }
+
+            values.sort();
+
+            return values[Math.floor(values.length/2)];
         },
         calcAvgRed:function (data) {
             return rankingFuncs.calcBySum(data, function (data, index) {
