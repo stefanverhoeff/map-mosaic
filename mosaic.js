@@ -98,8 +98,8 @@
             sortTilesByColor();
 
             for (i = 0; i < tiles.length; ++i) {
-                x = Math.floor(i / height);
-                y = i - x * height;
+                y = Math.floor(i / width);
+                x = i - y * width;
                 renderTileCanvas(tiles[i], forceTileSize, x, y);
             }
         });
