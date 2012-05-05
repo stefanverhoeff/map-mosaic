@@ -27,3 +27,11 @@ Todo:
   - City
   - Around lat/lng
   - Select from map, can read tiles directly from map in DOM?
+
+
+Registration api.map.nokia.com
+==============================
+
+Name: MapMosaic
+App ID: ayTdeMpluq0EkCHDIplm
+Token/ AppCode: SxHxfkhbfzGOzF2AeBZTnQ
