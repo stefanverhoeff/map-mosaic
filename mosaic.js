@@ -1,4 +1,6 @@
-(function () {
+(function ($, nokia, util) {
+    "use strict";
+
     var appId = "ayTdeMpluq0EkCHDIplm";
     var token = "SxHxfkhbfzGOzF2AeBZTnQ";
     var forceTileSize = 64;
@@ -8,26 +10,44 @@
     var domEnabled = $('#enableDom').attr('checked');
     var tilesTotal, tilesLoaded, tiles;
     var tileType = 'satellite.day';
+    var canvas = document.getElementById('mapCanvas');
+    var ctx = canvas.getContext('2d');
+    var scratchCanvas = $('<canvas></canvas>')[0];
+    var scratchCtx = scratchCanvas.getContext('2d');
 
     var rankingFuncs = {
-        calcAvgColor:function (pixel) {
-            return (pixel.data[0] + pixel.data[1] + pixel.data[2]) / 3.0;
+        calcBySum:function (data, sumFunc) {
+            var i, sum = 0;
+
+            for (i = 0; i < data.length; i += 4) {
+                sum += sumFunc(data, i);
+            }
+
+            return sum / (data.length / 4);
         },
-        calcAvgRed:function (pixel) {
-            return pixel.data[0];
+        calcAvgColor:function (data) {
+            return rankingFuncs.calcBySum(data, function (data, index) {
+                return (data[index] + data[index + 1] + data[index + 2]) / 3.0;
+            });
         },
-        calcAvgGreen:function (pixel) {
-            return pixel.data[1];
+        calcAvgRed:function (data) {
+            return rankingFuncs.calcBySum(data, function (data, index) {
+                return data[index];
+            });
         },
-        calcAvgBlue:function (pixel) {
-            return pixel.data[2];
+        calcAvgGreen:function (data) {
+            return rankingFuncs.calcBySum(data, function (data, index) {
+                return data[index + 1];
+            });
+        },
+        calcAvgBlue:function (data) {
+            return rankingFuncs.calcBySum(data, function (data, index) {
+                return data[index + 2];
+            });
         }
     };
 
     var rankingFunc = rankingFuncs.calcAvgColor;
-
-    var canvas = document.getElementById('mapCanvas');
-    var ctx = canvas.getContext('2d');
 
     var initHandlers = function () {
         $('#enableCanvas').click(function () {
@@ -44,7 +64,7 @@
             rankingFunc = rankingFuncs[this.value];
 
             tilesLoaded = 0;
-            for (i = 0; i < tiles.length; ++i) {
+            for (var i = 0; i < tiles.length; ++i) {
                 calcTileRanking(tiles[i]);
             }
 
@@ -114,7 +134,7 @@
 
         for (x = 0; x < width; ++x) {
             for (y = 0; y < height; ++y) {
-                var tileUrl = getTileUrl(15, 17640 + getRandomInt(-100, 100), 10755 + getRandomInt(-100, 100));
+                var tileUrl = getTileUrl(15, 17640 + util.getRandomInt(-100, 100), 10755 + util.getRandomInt(-100, 100));
                 var tile;
 
                 if (domEnabled) {
@@ -175,23 +195,12 @@
     };
 
     var calcTileRanking = function (tile) {
-        var sum, x, y;
-        var scratchCanvas, scratchCtx;
-
-        scratchCanvas = $('<canvas></canvas>')[0];
         scratchCanvas.width = tile.image.width;
         scratchCanvas.height = tile.image.height;
-        scratchCtx = scratchCanvas.getContext('2d');
         scratchCtx.drawImage(tile.image, 0, 0);
-        sum = 0;
 
-        for (x = 0; x < tile.image.width; ++x) {
-            for (y = 0; y < tile.image.height; ++y) {
-                pixel = scratchCtx.getImageData(x, y, 1, 1);
-                sum += rankingFunc(pixel);
-            }
-        }
-        tile.avgColor = sum / (tile.image.width * tile.image.height);
+        var imageData = scratchCtx.getImageData(0, 0, tile.image.width, tile.image.height);
+        tile.ranking = rankingFunc(imageData.data);
 
         tilesLoaded++;
         updateProgress(tilesLoaded, tilesTotal);
@@ -208,7 +217,7 @@
 
     var sortTilesByColor = function () {
         tiles.sort(function (a, b) {
-            return a.avgColor - b.avgColor;
+            return a.ranking - b.ranking;
         });
     };
 
@@ -219,7 +228,7 @@
         x = x || 17600;
         y = y || 10750;
 
-        server = getRandomInt(1, 4);
+        server = util.getRandomInt(1, 4);
 
         url = "/map-tiles-" + server + "/newest/" + tileType + "/" + zoom + "/" + x + "/" + y + "/128/png8?token=" + token + "&app_id=" + appId;
         return url;
@@ -236,4 +245,4 @@
 //    initMap();
     initTiles();
 
-})();
+})($, nokia, util);

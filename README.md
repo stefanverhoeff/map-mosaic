@@ -17,12 +17,14 @@ X- Load in canvas
 X - Need x-origin proxy?
 X- try sort by hue
 - Slice partial tiles
+X- Store raw pixel data in tile cache
 - Algorithm for matching image
 X  - Calc average color
   - Closest match for r-g-b values
   - Detect shapes?
   - Greyscales values / hue
   - Alpha-blend with uploaded image
+  - Shape based matching, use edge detecion?
 - Need cache for rendered tiles?
   - Local script
   - Or browser + localStorage?
@@ -35,7 +37,6 @@ X  - Calc average color
   - City
   - Around lat/lng
   - Select from map, can read tiles directly from map in DOM?
-
 
 Registration api.map.nokia.com
 ==============================
