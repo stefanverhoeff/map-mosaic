@@ -7,6 +7,7 @@
     var canvasEnabled = $('#enableCanvas').attr('checked');
     var domEnabled = $('#enableDom').attr('checked');
     var tilesTotal, tilesLoaded, tiles;
+    var tileType = 'satellite.day';
 
     var rankingFuncs = {
         calcAvgColor:function (pixel) {
@@ -48,6 +49,11 @@
             }
 
             sortAndRenderTilesCanvas();
+        });
+
+        $('input[name=tileType]').click(function () {
+            tileType = this.value;
+            initTiles();
         });
     };
 
@@ -215,7 +221,7 @@
 
         server = getRandomInt(1, 4);
 
-        url = "/map-tiles-" + server + "/newest/satellite.day/" + zoom + "/" + x + "/" + y + "/128/png8?token=" + token + "&app_id=" + appId;
+        url = "/map-tiles-" + server + "/newest/" + tileType + "/" + zoom + "/" + x + "/" + y + "/128/png8?token=" + token + "&app_id=" + appId;
         return url;
     };
 

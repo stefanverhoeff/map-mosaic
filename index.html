@@ -8,6 +8,7 @@
     <link rel="stylesheet" type="text/css" href="main.css"/>
 </head>
 <body>
+
 <h1>Map Mosaic</h1>
 
 <div id="tools">
@@ -16,6 +17,17 @@
     </label>
     <label>
         <input type="checkbox" id="enableCanvas" checked/> Canvas
+    </label>
+    <br/><br/>
+
+    <label>
+        <input type="radio" name="tileType" class="algorithm" value="satellite.day" checked/> Satellite
+    </label>
+    <label>
+        <input type="radio" name="tileType" class="algorithm" value="normal.day"/> Map
+    </label>
+    <label>
+        <input type="radio" name="tileType" class="algorithm" value="terrain.day"/> Terrain
     </label>
 
     <br/><br/>
