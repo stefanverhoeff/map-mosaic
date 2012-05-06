@@ -5,6 +5,7 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
     var sourceTileSize = 128;
     // Must be divide-able by source size
     var targetTileSize = 32;
+    var tilesPerSourceTile = sourceTileSize / targetTileSize;
     var width = 32;
     var height = 20;
     var canvasEnabled = $('#enableCanvas').attr('checked');
@@ -35,9 +36,8 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
     };
 
     var renderTiles = function () {
-        var x, y, sourceTargetTileRatio;
+        var x, y;
 
-        sourceTargetTileRatio = sourceTileSize / targetTileSize;
         tilesTotal = width * height;
         tilesLoaded = 0;
         tiles = [];
@@ -46,8 +46,8 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
             return;
         }
 
-        for (x = 0; x < Math.floor(width/sourceTargetTileRatio); ++x) {
-            for (y = 0; y < Math.floor(height/sourceTargetTileRatio); ++y) {
+        for (x = 0; x < Math.floor(width/tilesPerSourceTile); ++x) {
+            for (y = 0; y < Math.floor(height/tilesPerSourceTile); ++y) {
                 var tileUrl = nokiaMap.getTileUrl(15, 17640 + util.getRandomInt(-100, 100), 10755 + util.getRandomInt(-100, 100), sourceTileSize, tileType);
                 fetchTileAndSplit(tileUrl);
             }
@@ -102,7 +102,7 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
         };
 
         sourceImage.onerror = function () {
-            increaseProgress();
+            increaseProgress(tilesPerSourceTile*tilesPerSourceTile);
         };
     };
 
@@ -149,8 +149,9 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
         updateProgress(tilesLoaded, tilesTotal);
     };
 
-    var increaseProgress = function () {
-        tilesLoaded++;
+    var increaseProgress = function (amount) {
+        amount = amount || 1;
+        tilesLoaded += amount;
         updateProgress(tilesLoaded, tilesTotal);
     };
 
