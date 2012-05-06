@@ -4,10 +4,10 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
     // 128 or 256
     var sourceTileSize = 128;
     // Must be divide-able by source size
-    var targetTileSize = 32;
+    var targetTileSize = 16;
     var tilesPerSourceTile = sourceTileSize / targetTileSize;
-    var width = 16;
-    var height = 16;
+    var width = 16 * 2;
+    var height = 16 * 2;
     var canvasEnabled = $('#enableCanvas').attr('checked');
     var domEnabled = $('#enableDom').attr('checked');
     var tilesTotal;
@@ -34,7 +34,7 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
         tilesLoaded = 0;
         tilesTotal = (sourceImage.width / targetTileSize) * (sourceImage.height / targetTileSize);
         resetProgress();
-        // TODO: fix sorting randomness
+        // TODO: fix sorting randomness - running same filter several times results in differences...
         for (x = 0; x * targetTileSize < sourceImage.width; ++x) {
             for (y = 0; y * targetTileSize < sourceImage.height; ++y) {
                 (function (x, y) {
@@ -43,7 +43,7 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
 
                         imageTile.x = x * targetTileSize;
                         imageTile.y = y * targetTileSize;
-                        imageTile.imageData = scratchCtx.getImageData(x * targetTileSize, y * targetTileSize, targetTileSize, targetTileSize);
+                        imageTile.imageData = scratchCtx.getImageData(y * targetTileSize, x * targetTileSize, targetTileSize, targetTileSize);
 
                         sourceImageTiles.push(imageTile);
                         increaseProgress();
@@ -54,7 +54,7 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
 
         tiles = sourceImageTiles;
         waitForTilesRendered(function () {
-            calcTilesRankingAndDisplay();
+            calcTilesRanking();
         });
     };
 
@@ -146,6 +146,14 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
     };
 
     var calcTilesRankingAndDisplay = function () {
+        calcTilesRanking();
+        waitForTilesRendered(function () {
+            sortTilesBySimilarity();
+            displayTiles();
+        });
+    };
+
+    var calcTilesRanking = function () {
         resetProgress();
         for (var i = 0; i < tiles.length; ++i) {
             var tile = tiles[i];
@@ -154,11 +162,6 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
                 setTimeout(function () {
                     theTile.ranking = calcTileRanking(theTile);
                     increaseProgress();
-
-                    if (tilesLoaded === tilesTotal) {
-                        sortTilesByRanking();
-                        displayTiles();
-                    }
                 }, 10);
             })(tile);
         }
@@ -181,6 +184,34 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
         tiles.sort(function (a, b) {
             return a.ranking - b.ranking;
         });
+    };
+
+    var sortTilesBySimilarity = function () {
+        var tilesMapped = [], tileMatchScore;
+
+        // Iterate source image
+        for (var i = 0; i < sourceImageTiles.length; ++i) {
+            var matchedTile = tiles[0];
+            matchedTile.score = -999;
+
+            // Iterate map-tiles, find closest match for source tile
+            for (var j = 0; j < tiles.length; ++j) {
+
+                tileMatchScore = calcTileMatch(sourceImageTiles[i], tiles[j]);
+                if (tileMatchScore > matchedTile.score) {
+                    matchedTile = tiles[j];
+                    matchedTile.score = tileMatchScore;
+                }
+            }
+
+            tilesMapped.push(matchedTile);
+        }
+
+        tiles = tilesMapped;
+    };
+
+    var calcTileMatch = function (imageTile, mapTile) {
+        return -Math.abs(imageTile.ranking - mapTile.ranking);
     };
 
     var resetProgress = function () {
@@ -224,6 +255,8 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
     });
 
     initTileDisplay();
-//    renderTiles();
     readSourceImageData();
+    waitForTilesRendered(function () {
+        renderTiles();
+    });
 });
