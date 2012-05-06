@@ -19,6 +19,7 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
     var sourceImageTiles;
 
     var rankingFunc = rankingFuncs.calcAvgColor;
+//    var rankingFunc = rankingFuncs.calcAllColors;
 
     var readSourceImageData = function () {
         var sourceImage;
@@ -198,6 +199,7 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
             for (var j = 0; j < tiles.length; ++j) {
 
                 tileMatchScore = calcTileMatch(sourceImageTiles[i], tiles[j]);
+//                tileMatchScore = calcTileMatchRGB(sourceImageTiles[i], tiles[j]);
                 if (tileMatchScore > matchedTile.score) {
                     matchedTile = tiles[j];
                     matchedTile.score = tileMatchScore;
@@ -212,6 +214,16 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
 
     var calcTileMatch = function (imageTile, mapTile) {
         return -Math.abs(imageTile.ranking - mapTile.ranking);
+    };
+
+    var calcTileMatchRGB = function (imageTile, mapTile) {
+        return 100 * (
+            1.0 - ((
+                Math.Abs(imageTile.ranking[0] - mapTile.ranking[0]) +
+                    Math.Abs(imageTile.ranking[1] - mapTile.ranking[1]) +
+                    Math.Abs(imageTile.ranking[2] - mapTile.ranking[2])
+            ) / (256.0 * 3))
+        );
     };
 
     var resetProgress = function () {

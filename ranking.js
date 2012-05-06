@@ -16,6 +16,18 @@ define(function () {
                 return (data[index] + data[index + 1] + data[index + 2]) / 3.0;
             });
         },
+        calcAllColors:function (data) {
+            var i, red = 0, green = 0, blue = 0;
+
+            for (i = 0; i < data.length; i += 4) {
+                red += data[i] - (data[i + 1] + data[i + 2]) / 2;
+            }
+
+            return [red / (data.length / 4),
+                green / (data.length / 4),
+                blue / (data.length / 4)
+            ];
+        },
         calcMedianColor:function (data) {
             var i, values = [];
 
