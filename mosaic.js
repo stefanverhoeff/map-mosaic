@@ -1,9 +1,11 @@
 require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas', 'display-dom'], function ($, nokiaMap, util, rankingFuncs, handlers, displayCanvas, displayDom) {
     "use strict";
 
+    // 128 or 256
     var sourceTileSize = 128;
-    var targetTileSize = 64;
-    var width = 24;
+    // Must be divide-able by source size
+    var targetTileSize = 32;
+    var width = 32;
     var height = 20;
     var canvasEnabled = $('#enableCanvas').attr('checked');
     var domEnabled = $('#enableDom').attr('checked');
@@ -33,8 +35,9 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
     };
 
     var renderTiles = function () {
-        var x, y;
+        var x, y, sourceTargetTileRatio;
 
+        sourceTargetTileRatio = sourceTileSize / targetTileSize;
         tilesTotal = width * height;
         tilesLoaded = 0;
         tiles = [];
@@ -43,8 +46,8 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
             return;
         }
 
-        for (x = 0; x < width/2; ++x) {
-            for (y = 0; y < height/2; ++y) {
+        for (x = 0; x < Math.floor(width/sourceTargetTileRatio); ++x) {
+            for (y = 0; y < Math.floor(height/sourceTargetTileRatio); ++y) {
                 var tileUrl = nokiaMap.getTileUrl(15, 17640 + util.getRandomInt(-100, 100), 10755 + util.getRandomInt(-100, 100), sourceTileSize, tileType);
                 fetchTileAndSplit(tileUrl);
             }
