@@ -4,8 +4,8 @@
     var appId = "ayTdeMpluq0EkCHDIplm";
     var token = "SxHxfkhbfzGOzF2AeBZTnQ";
     var forceTileSize = 64;
-    var width = 16;
-    var height = 9;
+    var width = 25;
+    var height = 10;
     var canvasEnabled = $('#enableCanvas').attr('checked');
     var domEnabled = $('#enableDom').attr('checked');
     var tilesTotal, tilesLoaded, tiles;
