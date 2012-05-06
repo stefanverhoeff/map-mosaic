@@ -63,12 +63,12 @@
     var initHandlers = function () {
         $('#enableCanvas').click(function () {
             canvasEnabled = this.checked;
-            initTiles();
+            displayTiles();
         });
 
         $('#enableDom').click(function () {
             domEnabled = this.checked;
-            initTiles();
+            displayTiles();
         });
 
         $('input[name=algorithm]').click(function () {
@@ -79,7 +79,8 @@
                 calcTileRanking(tiles[i]);
             }
 
-            sortAndRenderTilesCanvas();
+            sortTilesByRanking();
+            displayTiles();
         });
 
         $('input[name=tileType]').click(function () {
@@ -157,20 +158,14 @@
             }
         }
 
-        waitForTilesRendered(sortAndRenderTilesCanvas);
+        waitForTilesRendered(function () {
+            sortTilesByRanking();
+            displayTiles();
+        });
     };
 
-    var renderTileDom = function (tile, size) {
-        $('#tiles').append(tile.image)
-            .children().last().attr({
-                width:size,
-                height:size
-            });
-    };
-
-    var sortAndRenderTilesCanvas = function () {
+    var displayTiles = function () {
         var i, x, y;
-        sortTilesByColor();
 
         for (i = 0; i < tiles.length; ++i) {
             y = Math.floor(i / width);
@@ -186,6 +181,14 @@
         }
     };
 
+    var renderTileDom = function (tile, size) {
+        $('#tiles').append(tile.image)
+            .children().last().attr({
+                width:size,
+                height:size
+            });
+    };
+    
     var renderTileCanvas = function (tile, tileSize, x, y) {
         var left = x * tileSize;
         var top = y * tileSize;
@@ -230,7 +233,7 @@
         }, 100);
     };
 
-    var sortTilesByColor = function () {
+    var sortTilesByRanking = function () {
         tiles.sort(function (a, b) {
             return a.ranking - b.ranking;
         });
