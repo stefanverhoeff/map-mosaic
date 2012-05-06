@@ -63,11 +63,13 @@
     var initHandlers = function () {
         $('#enableCanvas').click(function () {
             canvasEnabled = this.checked;
+            initTileDisplay();
             displayTiles();
         });
 
         $('#enableDom').click(function () {
             domEnabled = this.checked;
+            initTileDisplay();
             displayTiles();
         });
 
@@ -85,7 +87,7 @@
 
         $('input[name=tileType]').click(function () {
             tileType = this.value;
-            initTiles();
+            renderTiles();
         });
     };
 
@@ -113,11 +115,7 @@
         $('#mapContainer').show();
     };
 
-    var initTiles = function () {
-        tilesTotal = width * height;
-        tilesLoaded = 0;
-        tiles = [];
-
+    var initTileDisplay = function () {
         $('#tiles').empty();
 
         if (domEnabled) {
@@ -137,12 +135,14 @@
         else {
             $('#mapCanvas').hide();
         }
-
-        renderTiles();
     };
 
     var renderTiles = function () {
         var x, y;
+
+        tilesTotal = width * height;
+        tilesLoaded = 0;
+        tiles = [];
 
         if (! canvasEnabled && ! domEnabled) {
             return;
@@ -261,6 +261,7 @@
 
     initHandlers();
 //    initMap();
-    initTiles();
+    initTileDisplay();
+    renderTiles();
 
 })($, nokia, util);
