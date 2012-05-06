@@ -21,30 +21,33 @@
     <br/><br/>
 
     <label>
-        <input type="radio" name="tileType" class="algorithm" value="satellite.day" checked/> Satellite
+        <input type="radio" name="tileType" value="satellite.day" checked/> Satellite
     </label>
     <label>
-        <input type="radio" name="tileType" class="algorithm" value="normal.day"/> Map
+        <input type="radio" name="tileType" value="normal.day"/> Map
     </label>
     <label>
-        <input type="radio" name="tileType" class="algorithm" value="terrain.day"/> Terrain
+        <input type="radio" name="tileType" value="terrain.day"/> Terrain
+    </label>
+    <label>
+        <input type="radio" name="tileType" value="sourceImage"/> Source image
     </label>
 
     <br/><br/>
     <label>
-        <input type="radio" name="algorithm" class="algorithm" value="calcAvgColor" checked/> Average total
+        <input type="radio" name="algorithm" value="calcAvgColor" checked/> Average total
     </label>
     <label>
-        <input type="radio" name="algorithm" class="algorithm" value="calcAvgRed"/> Average red
+        <input type="radio" name="algorithm" value="calcAvgRed"/> Average red
     </label>
     <label>
-        <input type="radio" name="algorithm" class="algorithm" value="calcAvgGreen"/> Average green
+        <input type="radio" name="algorithm" value="calcAvgGreen"/> Average green
     </label>
     <label>
-        <input type="radio" name="algorithm" class="algorithm" value="calcAvgBlue"/> Average blue
+        <input type="radio" name="algorithm" value="calcAvgBlue"/> Average blue
     </label>
     <label>
-        <input type="radio" name="algorithm" class="algorithm" value="calcMedianColor"/> Median
+        <input type="radio" name="algorithm" value="calcMedianColor"/> Median
     </label>
 
     <div id="status">
@@ -54,22 +57,40 @@
 
 </div>
 
-<div id="scratch">
-</div>
-
-<div class="clear"></div>
-
 <div id="mapContainer">
 </div>
 
-<div id="tiles">
+<div>
+    <div id="tiles">
+        <h3>Dom:</h3>
 
+    </div>
 </div>
 
 <br/><br/>
 
-<canvas id="mapCanvas">
-</canvas>
+<div class="clear">
+    <h3>Canvas:</h3>
+    <canvas id="mapCanvas">
+    </canvas>
+</div>
+
+<br/><br/>
+
+<div>
+    <h3>Buffer:</h3>
+
+    <div id="scratch">
+    </div>
+</div>
+
+<div class="clear"></div>
+
+<div>
+    <h3>Source image:</h3>
+
+    <img id="sourceImage" src="HTML5_Logo_512.png"/>
+</div>
 
 <script src="http://api.maps.nokia.com/2.2.0/jsl.js" type="text/javascript" charset="utf-8"></script>
 <script data-main="mosaic" src="require.js"></script>

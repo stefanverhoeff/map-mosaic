@@ -22,8 +22,14 @@ define(['jquery'], function ($) {
 
             $('input[name=tileType]').click(function () {
                 mosaic.initTileDisplay();
-                mosaic.setTileType(this.value);
-                mosaic.renderTiles();
+
+                if (this.value === 'sourceImage') {
+                    mosaic.readSourceImageData();
+                }
+                else {
+                    mosaic.setTileType(this.value);
+                    mosaic.renderTiles();
+                }
             });
         }
     };

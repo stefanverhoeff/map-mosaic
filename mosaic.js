@@ -6,8 +6,8 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
     // Must be divide-able by source size
     var targetTileSize = 32;
     var tilesPerSourceTile = sourceTileSize / targetTileSize;
-    var width = 32;
-    var height = 20;
+    var width = 16;
+    var height = 16;
     var canvasEnabled = $('#enableCanvas').attr('checked');
     var domEnabled = $('#enableDom').attr('checked');
     var tilesTotal;
@@ -16,8 +16,47 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
     var tileType = 'satellite.day';
     var scratchCanvas = $('<canvas></canvas>').appendTo('#scratch')[0];
     var scratchCtx = scratchCanvas.getContext('2d');
+    var sourceImageTiles;
 
     var rankingFunc = rankingFuncs.calcAvgColor;
+
+    var readSourceImageData = function () {
+        var sourceImage;
+        var x, y;
+
+        sourceImageTiles = [];
+        sourceImage = $('#sourceImage')[0];
+
+        scratchCanvas.width = sourceImage.width;
+        scratchCanvas.height = sourceImage.height;
+        scratchCtx.drawImage(sourceImage, 0, 0);
+
+        tilesLoaded = 0;
+        tilesTotal = (sourceImage.width / targetTileSize) * (sourceImage.height / targetTileSize);
+        resetProgress();
+        // TODO: fix sorting randomness
+        for (x = 0; x * targetTileSize < sourceImage.width; ++x) {
+            for (y = 0; y * targetTileSize < sourceImage.height; ++y) {
+                (function (x, y) {
+                    setTimeout(function () {
+                        var imageTile = {};
+
+                        imageTile.x = x * targetTileSize;
+                        imageTile.y = y * targetTileSize;
+                        imageTile.imageData = scratchCtx.getImageData(x * targetTileSize, y * targetTileSize, targetTileSize, targetTileSize);
+
+                        sourceImageTiles.push(imageTile);
+                        increaseProgress();
+                    }, 10);
+                })(x, y);
+            }
+        }
+
+        tiles = sourceImageTiles;
+        waitForTilesRendered(function () {
+            calcTilesRankingAndDisplay();
+        });
+    };
 
     var initTileDisplay = function () {
         if (domEnabled) {
@@ -46,8 +85,8 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
             return;
         }
 
-        for (x = 0; x < Math.floor(width/tilesPerSourceTile); ++x) {
-            for (y = 0; y < Math.floor(height/tilesPerSourceTile); ++y) {
+        for (x = 0; x < Math.floor(width / tilesPerSourceTile); ++x) {
+            for (y = 0; y < Math.floor(height / tilesPerSourceTile); ++y) {
                 var tileUrl = nokiaMap.getTileUrl(15, 17640 + util.getRandomInt(-100, 100), 10755 + util.getRandomInt(-100, 100), sourceTileSize, tileType);
                 fetchTileAndSplit(tileUrl);
             }
@@ -91,7 +130,7 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
                 for (y = 0; y * targetTileSize < sourceTileSize; ++y) {
                     var targetTile = {};
 
-                    targetTile.imageData = scratchCtx.getImageData(x*targetTileSize, y*targetTileSize, targetTileSize, targetTileSize);
+                    targetTile.imageData = scratchCtx.getImageData(x * targetTileSize, y * targetTileSize, targetTileSize, targetTileSize);
                     targetTile.url = url;
 
                     tiles.push(targetTile);
@@ -102,7 +141,7 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
         };
 
         sourceImage.onerror = function () {
-            increaseProgress(tilesPerSourceTile*tilesPerSourceTile);
+            increaseProgress(tilesPerSourceTile * tilesPerSourceTile);
         };
     };
 
@@ -180,9 +219,11 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
         calcTileRanking:calcTileRanking,
         sortTilesByRanking:sortTilesByRanking,
         renderTiles:renderTiles,
-        calcTilesRanking:calcTilesRankingAndDisplay
+        calcTilesRanking:calcTilesRankingAndDisplay,
+        readSourceImageData:readSourceImageData
     });
 
     initTileDisplay();
-    renderTiles();
+//    renderTiles();
+    readSourceImageData();
 });
