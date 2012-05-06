@@ -13,7 +13,7 @@ define(function () {
         },
         calcAvgColor:function (data) {
             return funcs.calcBySum(data, function (data, index) {
-                return (data[index] + data[index + 1] + data[index + 2]) / 3.0;
+                return (data[index] + data[index + 1] + data[index + 2]) / 3.0 - data[index + 3];
             });
         },
         calcAllColors:function (data) {
