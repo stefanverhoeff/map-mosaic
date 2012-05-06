@@ -1,4 +1,4 @@
-require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas'], function ($, nokiaMap, util, rankingFuncs, handlers, displayCanvas) {
+require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas', 'display-dom'], function ($, nokiaMap, util, rankingFuncs, handlers, displayCanvas, displayDom) {
     "use strict";
 
     var forceTileSize = 64;
@@ -14,15 +14,11 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas']
     var rankingFunc = rankingFuncs.calcAvgColor;
 
     var initTileDisplay = function () {
-        $('#tiles').empty();
-
         if (domEnabled) {
-            $('#tiles').width(width * forceTileSize);
-            $('#tiles').height(height * forceTileSize);
-            $('#tiles').show();
+            displayDom.init(width, height, forceTileSize);
         }
         else {
-            $('#tiles').hide();
+            displayDom.hide();
         }
 
         if (canvasEnabled) {
@@ -47,9 +43,7 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas']
         for (x = 0; x < width; ++x) {
             for (y = 0; y < height; ++y) {
                 var tileUrl = nokiaMap.getTileUrl(15, 17640 + util.getRandomInt(-100, 100), 10755 + util.getRandomInt(-100, 100), tileType);
-                var tile;
-
-                tile = fetchTile(tileUrl);
+                var tile = fetchTile(tileUrl);
                 tiles.push(tile);
             }
         }
@@ -72,17 +66,9 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas']
             }
 
             if (domEnabled) {
-                renderTileDom(tiles[i], forceTileSize);
+                displayDom.renderTile(tiles[i], forceTileSize, x, y);
             }
         }
-    };
-
-    var renderTileDom = function (tile, size) {
-        $('#tiles').append(tile.image)
-            .children().last().attr({
-                width:size,
-                height:size
-            });
     };
 
     var fetchTile = function (url) {
@@ -148,10 +134,10 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas']
         setTilesLoaded:function (loaded) {
             tilesLoaded = loaded;
         },
-        setTileType: function (type) {
+        setTileType:function (type) {
             tileType = type;
         },
-        getTiles: function () {
+        getTiles:function () {
             return tiles;
         },
         initTileDisplay:initTileDisplay,
