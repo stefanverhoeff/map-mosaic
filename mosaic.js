@@ -4,10 +4,10 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
     // 128 or 256
     var sourceTileSize = 128;
     // Must be divide-able by source size
-    var targetTileSize = 16;
+    var targetTileSize = 8;
     var tilesPerSourceTile = sourceTileSize / targetTileSize;
-    var width = 16 * 2;
-    var height = 16 * 2;
+    var width = 64;
+    var height = 64;
     var canvasEnabled = $('#enableCanvas').attr('checked');
     var domEnabled = $('#enableDom').attr('checked');
     var tilesTotal;
@@ -232,6 +232,14 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
         $('#tiles-total').text(total);
     };
 
+    var start = function () {
+        initTileDisplay();
+        readSourceImageData();
+        waitForTilesRendered(function () {
+            renderTiles();
+        });
+    };
+
     handlers.init({
         setCanvasEnabled:function (enabled) {
             canvasEnabled = enabled;
@@ -245,18 +253,20 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
         setTileType:function (type) {
             tileType = type;
         },
+        setTargetTileSize:function (size) {
+            targetTileSize = size;
+            width = 512 / targetTileSize;
+            height = 512 / targetTileSize;
+        },
         initTileDisplay:initTileDisplay,
         displayTiles:displayTiles,
         calcTileRanking:calcTileRanking,
         sortTilesByRanking:sortTilesByRanking,
         renderTiles:renderTiles,
         calcTilesRanking:calcTilesRankingAndDisplay,
-        readSourceImageData:readSourceImageData
+        readSourceImageData:readSourceImageData,
+        start:start
     });
 
-    initTileDisplay();
-    readSourceImageData();
-    waitForTilesRendered(function () {
-        renderTiles();
-    });
+    start();
 });

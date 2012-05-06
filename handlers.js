@@ -20,6 +20,11 @@ define(['jquery'], function ($) {
                 mosaic.calcTilesRanking();
             });
 
+            $('input[name=tileSize]').change(function () {
+                mosaic.setTargetTileSize(parseInt(this.value, 10));
+                mosaic.start();
+            });
+
             $('input[name=tileType]').click(function () {
                 mosaic.initTileDisplay();
 
