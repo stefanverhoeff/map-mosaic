@@ -19,7 +19,7 @@ define(['jquery'], function ($) {
         var left = x * tileSize;
         var top = y * tileSize;
 
-        ctx.drawImage(tile.image, left, top, tileSize, tileSize);
+        ctx.putImageData(tile.imageData, left, top);
     };
 
     return {

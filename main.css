@@ -15,3 +15,17 @@
 progress {
     width:500px;
 }
+
+#tools {
+    float:left;
+    width:580px;
+}
+
+#scratch {
+    float:left;
+    margin-left:30px;
+}
+
+.clear {
+    clear:both;
+}

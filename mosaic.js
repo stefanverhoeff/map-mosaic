@@ -3,15 +3,15 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
 
     var sourceTileSize = 128;
     var targetTileSize = 64;
-    var width = 11;
-    var height = 5;
+    var width = 24;
+    var height = 20;
     var canvasEnabled = $('#enableCanvas').attr('checked');
     var domEnabled = $('#enableDom').attr('checked');
     var tilesTotal;
     var tilesLoaded;
     var tiles;
     var tileType = 'satellite.day';
-    var scratchCanvas = $('<canvas></canvas>')[0];
+    var scratchCanvas = $('<canvas></canvas>').appendTo('#scratch')[0];
     var scratchCtx = scratchCanvas.getContext('2d');
 
     var rankingFunc = rankingFuncs.calcAvgColor;
@@ -43,11 +43,10 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
             return;
         }
 
-        for (x = 0; x < width; ++x) {
-            for (y = 0; y < height; ++y) {
+        for (x = 0; x < width/2; ++x) {
+            for (y = 0; y < height/2; ++y) {
                 var tileUrl = nokiaMap.getTileUrl(15, 17640 + util.getRandomInt(-100, 100), 10755 + util.getRandomInt(-100, 100), sourceTileSize, tileType);
-                var tile = fetchTile(tileUrl);
-                tiles.push(tile);
+                fetchTileAndSplit(tileUrl);
             }
         }
 
@@ -73,19 +72,35 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
         }
     };
 
-    var fetchTile = function (url) {
-        var tile = {};
-        tile.image = new Image();
+    var fetchTileAndSplit = function (url) {
+        var sourceImage;
+        var x, y;
 
-        tile.image.src = url;
-        tile.image.onload = function () {
+        sourceImage = new Image();
+
+        sourceImage.src = url;
+        sourceImage.onload = function () {
+            scratchCanvas.width = sourceTileSize;
+            scratchCanvas.height = sourceTileSize;
+            scratchCtx.drawImage(sourceImage, 0, 0);
+
+            for (x = 0; x * targetTileSize < sourceTileSize; ++x) {
+                for (y = 0; y * targetTileSize < sourceTileSize; ++y) {
+                    var targetTile = {};
+
+                    targetTile.imageData = scratchCtx.getImageData(x*targetTileSize, y*targetTileSize, targetTileSize, targetTileSize);
+                    targetTile.url = url;
+
+                    tiles.push(targetTile);
+                    increaseProgress();
+                }
+            }
+
+        };
+
+        sourceImage.onerror = function () {
             increaseProgress();
         };
-        tile.image.onerror = function () {
-            increaseProgress();
-        };
-
-        return tile;
     };
 
     var calcTilesRankingAndDisplay = function () {
@@ -108,12 +123,7 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
     };
 
     var calcTileRanking = function (tile) {
-        scratchCanvas.width = tile.image.width;
-        scratchCanvas.height = tile.image.height;
-        scratchCtx.drawImage(tile.image, 0, 0);
-
-        var imageData = scratchCtx.getImageData(0, 0, tile.image.width, tile.image.height);
-        return rankingFunc(imageData.data);
+        return rankingFunc(tile.imageData.data);
     };
 
     var waitForTilesRendered = function (callback) {
@@ -168,6 +178,7 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
         renderTiles:renderTiles,
         calcTilesRanking:calcTilesRankingAndDisplay
     });
+
     initTileDisplay();
     renderTiles();
 });
