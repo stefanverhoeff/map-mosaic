@@ -31,7 +31,7 @@ define(['util'], function (util, nokia) {
             $('#mapContainer').show();
 
         },
-        getTileUrl:function (zoom, x, y, tileType) {
+        getTileUrl:function (zoom, x, y, tileSize, tileType) {
             var url, server;
 
             zoom = zoom || 15;
@@ -41,7 +41,7 @@ define(['util'], function (util, nokia) {
 
             server = util.getRandomInt(1, 4);
 
-            url = "/map-tiles-" + server + "/newest/" + tileType + "/" + zoom + "/" + x + "/" + y + "/128/png8?token=" + token + "&app_id=" + appId;
+            url = "/map-tiles-" + server + "/newest/" + tileType + "/" + zoom + "/" + x + "/" + y + "/" + tileSize + "/png8?token=" + token + "&app_id=" + appId;
             return url;
         }
     }

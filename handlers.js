@@ -17,17 +17,11 @@ define(['jquery'], function ($) {
 
             $('input[name=algorithm]').click(function () {
                 mosaic.setRankingFunc(this.value);
-
-                mosaic.setTilesLoaded(0);
-                for (var i = 0; i < mosaic.getTiles().length; ++i) {
-                    mosaic.calcTileRanking(mosaic.getTiles()[i]);
-                }
-
-                mosaic.sortTilesByRanking();
-                mosaic.displayTiles();
+                mosaic.calcTilesRanking();
             });
 
             $('input[name=tileType]').click(function () {
+                mosaic.initTileDisplay();
                 mosaic.setTileType(this.value);
                 mosaic.renderTiles();
             });
