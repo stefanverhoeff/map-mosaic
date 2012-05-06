@@ -1,33 +1,35 @@
 define(['jquery'], function ($) {
+    "use strict";
+
     return {
-        init:function () {
+        init:function (mosaic) {
             $('#enableCanvas').click(function () {
-                canvasEnabled = this.checked;
-                initTileDisplay();
-                displayTiles();
+                mosaic.setCanvasEnabled(this.checked);
+                mosaic.initTileDisplay();
+                mosaic.displayTiles();
             });
 
             $('#enableDom').click(function () {
-                domEnabled = this.checked;
-                initTileDisplay();
-                displayTiles();
+                mosaic.setDomEnabled(this.checked);
+                mosaic.initTileDisplay();
+                mosaic.displayTiles();
             });
 
             $('input[name=algorithm]').click(function () {
-                rankingFunc = rankingFuncs[this.value];
+                mosaic.setRankingFunc(this.value);
 
-                tilesLoaded = 0;
-                for (var i = 0; i < tiles.length; ++i) {
-                    calcTileRanking(tiles[i]);
+                mosaic.setTilesLoaded(0);
+                for (var i = 0; i < mosaic.getTiles().length; ++i) {
+                    mosaic.calcTileRanking(mosaic.getTiles()[i]);
                 }
 
-                sortTilesByRanking();
-                displayTiles();
+                mosaic.sortTilesByRanking();
+                mosaic.displayTiles();
             });
 
             $('input[name=tileType]').click(function () {
-                tileType = this.value;
-                renderTiles();
+                mosaic.setTileType(this.value);
+                mosaic.renderTiles();
             });
         }
     };

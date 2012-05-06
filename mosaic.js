@@ -1,4 +1,4 @@
-require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers'], function ($, nokiaMap, util, rankingFuncs, handlers) {
+require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas'], function ($, nokiaMap, util, rankingFuncs, handlers, displayCanvas) {
     "use strict";
 
     var forceTileSize = 64;
@@ -8,8 +8,6 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers'], function ($, nok
     var domEnabled = $('#enableDom').attr('checked');
     var tilesTotal, tilesLoaded, tiles;
     var tileType = 'satellite.day';
-    var canvas = document.getElementById('mapCanvas');
-    var ctx = canvas.getContext('2d');
     var scratchCanvas = $('<canvas></canvas>')[0];
     var scratchCtx = scratchCanvas.getContext('2d');
 
@@ -28,12 +26,10 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers'], function ($, nok
         }
 
         if (canvasEnabled) {
-            $('#mapCanvas')[0].width = (width * forceTileSize);
-            $('#mapCanvas')[0].height = (height * forceTileSize);
-            $('#mapCanvas').show();
+            displayCanvas.init(width, height, forceTileSize);
         }
         else {
-            $('#mapCanvas').hide();
+            displayCanvas.hide();
         }
     };
 
@@ -44,7 +40,7 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers'], function ($, nok
         tilesLoaded = 0;
         tiles = [];
 
-        if (! canvasEnabled && ! domEnabled) {
+        if (!canvasEnabled && !domEnabled) {
             return;
         }
 
@@ -72,7 +68,7 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers'], function ($, nok
             x = i - y * width;
 
             if (canvasEnabled) {
-                renderTileCanvas(tiles[i], forceTileSize, x, y);
+                displayCanvas.renderTile(tiles[i], forceTileSize, x, y);
             }
 
             if (domEnabled) {
@@ -87,13 +83,6 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers'], function ($, nok
                 width:size,
                 height:size
             });
-    };
-
-    var renderTileCanvas = function (tile, tileSize, x, y) {
-        var left = x * tileSize;
-        var top = y * tileSize;
-
-        ctx.drawImage(tile.image, left, top, tileSize, tileSize);
     };
 
     var fetchTile = function (url) {
@@ -146,7 +135,32 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers'], function ($, nok
         $('#tiles-total').text(total);
     };
 
-    handlers.init();
+    handlers.init({
+        setCanvasEnabled:function (enabled) {
+            canvasEnabled = enabled;
+        },
+        setDomEnabled:function (enabled) {
+            domEnabled = enabled;
+        },
+        setRankingFunc:function (rankingFuncName) {
+            rankingFunc = rankingFuncs[rankingFuncName];
+        },
+        setTilesLoaded:function (loaded) {
+            tilesLoaded = loaded;
+        },
+        setTileType: function (type) {
+            tileType = type;
+        },
+        getTiles: function () {
+            return tiles;
+        },
+        initTileDisplay:initTileDisplay,
+        displayTiles:displayTiles,
+        calcTileRanking:calcTileRanking,
+        sortTilesByRanking:sortTilesByRanking,
+        renderTiles:renderTiles
+
+    });
     initTileDisplay();
     renderTiles();
 });
