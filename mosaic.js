@@ -4,10 +4,10 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
     // 128 or 256
     var sourceTileSize = 128;
     // Must be divide-able by source size
-    var targetTileSize = 8;
+    var targetTileSize = 16;
     var tilesPerSourceTile = sourceTileSize / targetTileSize;
-    var width = 64;
-    var height = 64;
+    var width = 32;
+    var height = 32;
     var canvasEnabled = $('#enableCanvas').attr('checked');
     var domEnabled = $('#enableDom').attr('checked');
     var tilesTotal;
@@ -21,9 +21,15 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
     var rankingFunc = rankingFuncs.calcAvgColor;
 //    var rankingFunc = rankingFuncs.calcAllColors;
 
+    var statusMessage = function (message) {
+        $('#statusMessage').text(message);
+    };
+
     var readSourceImageData = function () {
         var sourceImage;
         var x, y;
+
+        statusMessage('Reading source image');
 
         sourceImageTiles = [];
         sourceImage = $('#sourceImage')[0];
@@ -78,6 +84,8 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
     var renderTiles = function () {
         var x, y;
 
+        statusMessage('Fetching tiles from server');
+
         tilesTotal = width * height;
         tilesLoaded = 0;
         tiles = [];
@@ -101,6 +109,8 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
     var displayTiles = function () {
         var i, x, y;
 
+        statusMessage('Rendering result');
+
         for (i = 0; i < tiles.length; ++i) {
             y = Math.floor(i / width);
             x = i - y * width;
@@ -116,20 +126,23 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
     };
 
     var fetchTileAndSplit = function (url) {
-        var sourceImage;
+        var sourceMapTile;
+        var targetTile;
         var x, y;
 
-        sourceImage = new Image();
+        statusMessage('Splitting map tiles');
 
-        sourceImage.src = url;
-        sourceImage.onload = function () {
+        sourceMapTile = new Image();
+
+        sourceMapTile.src = url;
+        sourceMapTile.onload = function () {
             scratchCanvas.width = sourceTileSize;
             scratchCanvas.height = sourceTileSize;
-            scratchCtx.drawImage(sourceImage, 0, 0);
+            scratchCtx.drawImage(sourceMapTile, 0, 0);
 
             for (x = 0; x * targetTileSize < sourceTileSize; ++x) {
                 for (y = 0; y * targetTileSize < sourceTileSize; ++y) {
-                    var targetTile = {};
+                    targetTile = {};
 
                     targetTile.imageData = scratchCtx.getImageData(x * targetTileSize, y * targetTileSize, targetTileSize, targetTileSize);
                     targetTile.url = url;
@@ -141,13 +154,16 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
 
         };
 
-        sourceImage.onerror = function () {
+        sourceMapTile.onerror = function () {
             increaseProgress(tilesPerSourceTile * tilesPerSourceTile);
         };
     };
 
     var calcTilesRankingAndDisplay = function () {
+        statusMessage('Calculating tile ranking');
+
         calcTilesRanking();
+
         waitForTilesRendered(function () {
             sortTilesBySimilarity();
             displayTiles();
@@ -189,6 +205,8 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
 
     var sortTilesBySimilarity = function () {
         var tilesMapped = [], tileMatchScore;
+
+        statusMessage('Sorting tiles by image similarity');
 
         // Iterate source image
         for (var i = 0; i < sourceImageTiles.length; ++i) {
