@@ -28,6 +28,12 @@ Todo:
 - Need cache for rendered tiles?
   - ~~Local script~~
   - Or browser + localStorage?
+- De-couple number of tiles fetched from image size
+- Support arbitrary image sizes
+- Fix Chrome
+- Restructure code, split off into files, files into folders
+- Deploy on 5-apps, or nodester
+- Add proxy for CORS to map-tile server written in Node, for more easy local running
 - Upload & read image
   - Frontend? Canvas?
 - Display uploaded image
