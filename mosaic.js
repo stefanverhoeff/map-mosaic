@@ -22,6 +22,7 @@ require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas',
 //    var rankingFunc = rankingFuncs.calcAllColors;
 
     var statusMessage = function (message) {
+        console.log(message);
         $('#statusMessage').text(message);
     };
 
