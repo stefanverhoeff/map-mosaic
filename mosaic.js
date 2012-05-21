@@ -1,5 +1,7 @@
-require(['jquery', 'nokia-map', 'util', 'ranking', 'handlers', 'display-canvas', 'display-dom'], function ($, nokiaMap, util, rankingFuncs, handlers, displayCanvas, displayDom) {
+require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canvas', 'display-dom'], function ($, nokiaMap, util, rankingFuncs, handlers, displayCanvas, displayDom) {
     "use strict";
+
+    console.log($);
 
     // 128 or 256
     var sourceTileSize = 128;
