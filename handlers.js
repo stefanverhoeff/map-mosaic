@@ -3,6 +3,13 @@ define(['jquery'], function ($) {
 
     return {
         init:function (mosaic) {
+            $('#test-image').change(function () {
+                $('#sourceImage').attr('src', this.value);
+                $('#sourceImage').load(function () {
+                    mosaic.start();
+                });
+            });
+
             $('input[name=algorithm]').click(function () {
                 mosaic.setRankingFunc(this.value);
                 mosaic.calcTilesRanking();
