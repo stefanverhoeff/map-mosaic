@@ -1,4 +1,4 @@
-require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canvas', 'display-dom'], function ($, nokiaMap, util, rankingFuncs, handlers, displayCanvas, displayDom) {
+require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canvas'], function ($, nokiaMap, util, rankingFuncs, handlers, displayCanvas) {
     "use strict";
 
     // 128 or 256
@@ -8,8 +8,6 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
     var tilesPerSourceTile = sourceTileSize / targetTileSize;
     var width = 32 * 1;
     var height = 32 * 1;
-    var canvasEnabled = $('#enableCanvas').attr('checked');
-    var domEnabled = $('#enableDom').attr('checked');
     var tilesTotal;
     var tilesLoaded;
     var tiles;
@@ -67,19 +65,7 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
     };
 
     var initTileDisplay = function () {
-        if (domEnabled) {
-            displayDom.init(width, height, targetTileSize);
-        }
-        else {
-            displayDom.hide();
-        }
-
-        if (canvasEnabled) {
-            displayCanvas.init(width, height, targetTileSize);
-        }
-        else {
-            displayCanvas.hide();
-        }
+        displayCanvas.init(width, height, targetTileSize);
     };
 
     var renderTiles = function () {
@@ -90,10 +76,6 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
         tilesTotal = width * height;
         tilesLoaded = 0;
         tiles = [];
-
-        if (!canvasEnabled && !domEnabled) {
-            return;
-        }
 
         for (x = 0; x < Math.floor(width / tilesPerSourceTile); ++x) {
             for (y = 0; y < Math.floor(height / tilesPerSourceTile); ++y) {
@@ -116,13 +98,7 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
             y = Math.floor(i / width);
             x = i - y * width;
 
-            if (canvasEnabled) {
-                displayCanvas.renderTile(tiles[i], targetTileSize, x, y);
-            }
-
-            if (domEnabled) {
-                displayDom.renderTile(tiles[i], targetTileSize, x, y);
-            }
+            displayCanvas.renderTile(tiles[i], targetTileSize, x, y);
         }
     };
 
@@ -273,15 +249,6 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
     };
 
     handlers.init({
-        setCanvasEnabled:function (enabled) {
-            canvasEnabled = enabled;
-        },
-        setDomEnabled:function (enabled) {
-            domEnabled = enabled;
-        },
-        setRankingFunc:function (rankingFuncName) {
-            rankingFunc = rankingFuncs[rankingFuncName];
-        },
         setTileType:function (type) {
             tileType = type;
         },
