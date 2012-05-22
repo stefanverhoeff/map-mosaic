@@ -6,8 +6,8 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
     // Must be divide-able by source size
     var targetTileSize = 16;
     var tilesPerSourceTile = sourceTileSize / targetTileSize;
-    var width = 32;
-    var height = 32;
+    var width = 32 * 1;
+    var height = 32 * 1;
     var canvasEnabled = $('#enableCanvas').attr('checked');
     var domEnabled = $('#enableDom').attr('checked');
     var tilesTotal;
@@ -134,8 +134,9 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
         statusMessage('Splitting map tiles');
 
         sourceMapTile = new Image();
-
+	sourceMapTile.crossOrigin = "anonymous";
         sourceMapTile.src = url;
+
         sourceMapTile.onload = function () {
             scratchCanvas.width = sourceTileSize;
             scratchCanvas.height = sourceTileSize;

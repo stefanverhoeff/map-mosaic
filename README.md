@@ -33,7 +33,7 @@ Todo:
 - Fix Chrome
 - Restructure code, split off into files, files into folders
 - Deploy on 5-apps, or nodester
-- Add proxy for CORS to map-tile server written in Node, for more easy local running
+- ~~Add proxy for CORS to map-tile server written in Node, for more easy local running~~
 - Upload & read image
   - Frontend? Canvas?
 - Display uploaded image
