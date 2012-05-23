@@ -4,10 +4,10 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
     // 128 or 256
     var sourceTileSize = 128;
     // Must be divide-able by source size
-    var targetTileSize = 16;
+    var targetTileSize = 8;
     var tilesPerSourceTile = sourceTileSize / targetTileSize;
-    var width = 32 * 1;
-    var height = 32 * 1;
+    var width = 32 * 2;
+    var height = 32 * 2;
     var tilesTotal;
     var tilesLoaded;
     var tiles;
