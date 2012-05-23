@@ -42,7 +42,6 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
         tilesLoaded = 0;
         tilesTotal = (sourceImage.width / targetTileSize) * (sourceImage.height / targetTileSize);
         resetProgress(tilesTotal);
-        // TODO: fix sorting randomness - running same filter several times results in differences...
         for (x = 0; x * targetTileSize < sourceImage.width; ++x) {
             for (y = 0; y * targetTileSize < sourceImage.height; ++y) {
                 (function (x, y) {
@@ -192,8 +191,6 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
 
         statusMessage('Rendering result');
 
-        /*for (i = 0; i < tiles.length; ++i) {*/
-        console.log("rows, cols, tile size, #tiles", tileRows, tileColumns, targetTileSize, mosaicTiles.length);
         for (row=0; row < tileRows; ++row) {
             for (column=0; column < tileColumns; ++column) {
                 tile = mosaicTiles[(row*tileRows) + column];
@@ -270,15 +267,12 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
         setMapTilesToFetch:function(number) {
             mapTilesToFetch = number;
         },
+        getMapTilesToFetch:function () {
+            return mapTilesToFetch;
+        },
         getTilesPerSourceTile:function () {
             return tilesPerSourceTile;
         },
-        initTileDisplay:initTileDisplay,
-        calcTileRanking:calcTileRanking,
-        sortTilesByRanking:sortTilesByRanking,
-        fetchMapTiles:fetchMapTiles,
-        calcTilesRanking:calcTilesRankingAndDisplay,
-        readSourceImageData:readSourceImageData,
         start:start
     });
 

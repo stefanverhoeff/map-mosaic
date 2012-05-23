@@ -9,38 +9,33 @@ define(['jquery'], function ($) {
                 $('#sourceImage').load(function () {
                     sourceImage = $('#sourceImage')[0];
                     mosaic.setSourceImage(sourceImage);
-                    mosaic.start();
                 });
             });
 
             $('input[name=algorithm]').click(function () {
                 mosaic.setRankingFunc(this.value);
-                mosaic.calcTilesRanking();
             });
 
             $('input[name=tileSize]').change(function () {
                 var size = parseInt(this.value, 10);
                 mosaic.setTargetTileSize(size);
                 $('#tileSizeValue').html(size);
+                $('#mapTilesToFetchMiniValue').html(mosaic.getMapTilesToFetch() * mosaic.getTilesPerSourceTile());
             });
 
             $('input[name=mapTilesToFetch]').change(function () {
                 var size = parseInt(this.value, 10);
                 mosaic.setMapTilesToFetch(size);
                 $('#mapTilesToFetchValue').html(size);
-                $('#mapTilesToFetchMiniValue').html(size * mosaic.getTilesPerSourceTile());
+                $('#mapTilesToFetchMiniValue').html(mosaic.getMapTilesToFetch() * mosaic.getTilesPerSourceTile());
             });
 
             $('input[name=tileType]').click(function () {
-                mosaic.initTileDisplay();
+                mosaic.setTileType(this.value);
+            });
 
-                if (this.value === 'sourceImage') {
-                    mosaic.readSourceImageData();
-                }
-                else {
-                    mosaic.setTileType(this.value);
-                    mosaic.fetchMapTiles();
-                }
+            $('#go-button').click(function () {
+                mosaic.start();
             });
 
             // Set initial values from input defaults
@@ -49,13 +44,11 @@ define(['jquery'], function ($) {
             var sourceImage = $('#sourceImage')[0];
             var mapTilesToFetch = parseInt($('input[name=mapTilesToFetch]').attr('value'), 10);
 
-            mosaic.setTargetTileSize(tileSize);
             $('#tileSize').html(tileSize);
 
+            mosaic.setTargetTileSize(tileSize);
             mosaic.setTileType(tileType);
-
             mosaic.setSourceImage(sourceImage);
-
             mosaic.setMapTilesToFetch(mapTilesToFetch);
         }
     };
