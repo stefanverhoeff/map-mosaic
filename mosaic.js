@@ -71,6 +71,7 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
         tilesLoaded = 0;
         mapTiles = [];
 
+        $('#raw-tiles').empty();
         resetProgress(mapTilesToFetch * tilesPerSourceTile);
         for (var i=0; i < mapTilesToFetch; ++i) {
             var tileUrl = nokiaMap.getTileUrl(15, 17640 + util.getRandomInt(-100, 100), 10755 + util.getRandomInt(-100, 100), sourceTileSize, tileType);
@@ -92,6 +93,8 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
         sourceMapTile = new Image();
         sourceMapTile.crossOrigin = "anonymous";
         sourceMapTile.src = url;
+
+        $('#raw-tiles').append(sourceMapTile);
 
         sourceMapTile.onload = function () {
             scratchCanvas.width = sourceTileSize;

@@ -37,6 +37,12 @@ progress {
     display: none;
 }
 
+#raw-tiles img {
+    float: left;
+    margin: 3px;
+    border:1px solid black;
+}
+
 .clear {
     clear:both;
 }
