@@ -12,12 +12,11 @@ define(['jquery'], function ($) {
 
     var hide = function () {
         $('#mapCanvas').hide();
-
     };
 
     var renderTile = function (tile, tileSize, row, column) {
-        var top = row * tileSize;
         var left = column * tileSize;
+        var top = row * tileSize;
 
         ctx.putImageData(tile.imageData, left, top);
     };

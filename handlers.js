@@ -4,8 +4,11 @@ define(['jquery'], function ($) {
     return {
         init:function (mosaic) {
             $('#test-image').change(function () {
+                var sourceImage;
                 $('#sourceImage').attr('src', this.value);
                 $('#sourceImage').load(function () {
+                    sourceImage = $('#sourceImage')[0];
+                    mosaic.setSourceImage(sourceImage);
                     mosaic.start();
                 });
             });
@@ -21,6 +24,13 @@ define(['jquery'], function ($) {
                 $('#tileSizeValue').html(size);
             });
 
+            $('input[name=mapTilesToFetch]').change(function () {
+                var size = parseInt(this.value, 10);
+                mosaic.setMapTilesToFetch(size);
+                $('#mapTilesToFetchValue').html(size);
+                $('#mapTilesToFetchMiniValue').html(size * mosaic.getTilesPerSourceTile());
+            });
+
             $('input[name=tileType]').click(function () {
                 mosaic.initTileDisplay();
 
@@ -29,18 +39,24 @@ define(['jquery'], function ($) {
                 }
                 else {
                     mosaic.setTileType(this.value);
-                    mosaic.renderTiles();
+                    mosaic.fetchMapTiles();
                 }
             });
 
             // Set initial values from input defaults
             var tileSize = parseInt($('input[name=tileSize]').attr('value'), 10);
             var tileType = $('input[name=tileType]').filter(':checked').attr('value');
+            var sourceImage = $('#sourceImage')[0];
+            var mapTilesToFetch = parseInt($('input[name=mapTilesToFetch]').attr('value'), 10);
 
             mosaic.setTargetTileSize(tileSize);
             $('#tileSize').html(tileSize);
 
             mosaic.setTileType(tileType);
+
+            mosaic.setSourceImage(sourceImage);
+
+            mosaic.setMapTilesToFetch(mapTilesToFetch);
         }
     };
 });
