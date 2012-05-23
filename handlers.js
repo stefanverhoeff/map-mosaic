@@ -35,9 +35,12 @@ define(['jquery'], function ($) {
 
             // Set initial values from input defaults
             var tileSize = parseInt($('input[name=tileSize]').attr('value'), 10);
+            var tileType = $('input[name=tileType]').filter(':checked').attr('value');
+
             mosaic.setTargetTileSize(tileSize);
-            $('#tileSizeValue').html(tileSize);
-            console.log("init tile size: " + tileSize);
+            $('#tileSize').html(tileSize);
+
+            mosaic.setTileType(tileType);
         }
     };
 });

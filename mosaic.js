@@ -4,10 +4,10 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
     // 128 or 256
     var sourceTileSize = 128;
     // Must be divide-able by source size
-    var targetTileSize = 16;
-    var tilesPerSourceTile = sourceTileSize / targetTileSize;
-    var tileColumns = 32 * 1;
-    var tileRows = 32 * 1;
+    var targetTileSize;
+    var tilesPerSourceTile;
+    var tileColumns;
+    var tileRows;
     var tilesTotal;
     var tilesLoaded;
     var tiles;
@@ -17,7 +17,6 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
     var sourceImageTiles;
 
     var rankingFunc = rankingFuncs.calcAvgColor;
-//    var rankingFunc = rankingFuncs.calcAllColors;
 
     var statusMessage = function (message) {
         console.log(message);
@@ -256,6 +255,7 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
             targetTileSize = size;
             tileColumns = 512 / targetTileSize;
             tileRows = 512 / targetTileSize;
+            tilesPerSourceTile = sourceTileSize / targetTileSize;
         },
         initTileDisplay:initTileDisplay,
         displayTiles:displayTiles,
