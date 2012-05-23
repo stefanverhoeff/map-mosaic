@@ -16,8 +16,9 @@ define(['jquery'], function ($) {
             });
 
             $('input[name=tileSize]').change(function () {
-                mosaic.setTargetTileSize(parseInt(this.value, 10));
-                mosaic.start();
+                var size = parseInt(this.value, 10);
+                mosaic.setTargetTileSize(size);
+                $('#tileSizeValue').html(size);
             });
 
             $('input[name=tileType]').click(function () {
@@ -31,6 +32,12 @@ define(['jquery'], function ($) {
                     mosaic.renderTiles();
                 }
             });
+
+            // Set initial values from input defaults
+            var tileSize = parseInt($('input[name=tileSize]').attr('value'), 10);
+            mosaic.setTargetTileSize(tileSize);
+            $('#tileSizeValue').html(tileSize);
+            console.log("init tile size: " + tileSize);
         }
     };
 });

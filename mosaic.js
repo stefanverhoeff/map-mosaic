@@ -4,10 +4,10 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
     // 128 or 256
     var sourceTileSize = 128;
     // Must be divide-able by source size
-    var targetTileSize = 8;
+    var targetTileSize = 16;
     var tilesPerSourceTile = sourceTileSize / targetTileSize;
-    var width = 32 * 2;
-    var height = 32 * 2;
+    var tileColumns = 32 * 1;
+    var tileRows = 32 * 1;
     var tilesTotal;
     var tilesLoaded;
     var tiles;
@@ -65,7 +65,7 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
     };
 
     var initTileDisplay = function () {
-        displayCanvas.init(width, height, targetTileSize);
+        displayCanvas.init(tileColumns, tileRows, targetTileSize);
     };
 
     var renderTiles = function () {
@@ -73,12 +73,12 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
 
         statusMessage('Fetching tiles from server');
 
-        tilesTotal = width * height;
+        tilesTotal = tileColumns * tileRows;
         tilesLoaded = 0;
         tiles = [];
 
-        for (x = 0; x < Math.floor(width / tilesPerSourceTile); ++x) {
-            for (y = 0; y < Math.floor(height / tilesPerSourceTile); ++y) {
+        for (x = 0; x < Math.floor(tileColumns / tilesPerSourceTile); ++x) {
+            for (y = 0; y < Math.floor(tileRows / tilesPerSourceTile); ++y) {
                 var tileUrl = nokiaMap.getTileUrl(15, 17640 + util.getRandomInt(-100, 100), 10755 + util.getRandomInt(-100, 100), sourceTileSize, tileType);
                 fetchTileAndSplit(tileUrl);
             }
@@ -90,15 +90,15 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
     };
 
     var displayTiles = function () {
-        var i, x, y;
+        var i, row, column;
 
         statusMessage('Rendering result');
 
         for (i = 0; i < tiles.length; ++i) {
-            y = Math.floor(i / width);
-            x = i - y * width;
+            row = Math.floor(i / tileColumns);
+            column = i - row * tileColumns;
 
-            displayCanvas.renderTile(tiles[i], targetTileSize, x, y);
+            displayCanvas.renderTile(tiles[i], targetTileSize, row, column);
         }
     };
 
@@ -254,8 +254,8 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
         },
         setTargetTileSize:function (size) {
             targetTileSize = size;
-            width = 512 / targetTileSize;
-            height = 512 / targetTileSize;
+            tileColumns = 512 / targetTileSize;
+            tileRows = 512 / targetTileSize;
         },
         initTileDisplay:initTileDisplay,
         displayTiles:displayTiles,

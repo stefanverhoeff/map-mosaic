@@ -4,9 +4,9 @@ define(['jquery'], function ($) {
     var canvas = document.getElementById('mapCanvas');
     var ctx = canvas.getContext('2d');
 
-    var init = function (width, height, tileSize) {
-        $('#mapCanvas')[0].width = (width * tileSize);
-        $('#mapCanvas')[0].height = (height * tileSize);
+    var init = function (tileColumns, tileRows, tileSize) {
+        $('#mapCanvas')[0].width = (tileColumns * tileSize);
+        $('#mapCanvas')[0].height = (tileRows * tileSize);
         $('#mapCanvas').show();
     };
 
@@ -15,9 +15,9 @@ define(['jquery'], function ($) {
 
     };
 
-    var renderTile = function (tile, tileSize, x, y) {
-        var left = x * tileSize;
-        var top = y * tileSize;
+    var renderTile = function (tile, tileSize, row, column) {
+        var top = row * tileSize;
+        var left = column * tileSize;
 
         ctx.putImageData(tile.imageData, left, top);
     };

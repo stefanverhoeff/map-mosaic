@@ -44,9 +44,12 @@
 
     <br/><br/>
     <label>
-        <input name="tileSize" value="8" size="3"/> Map tile size
+        <input name="tileSize" type="range" min="1" max="256" value="16" />
+        [<span id="tileSizeValue">16</span>]
+        Tile size
     </label>
 
+    <br/><br/>
     <label>
         <select id="test-image">
             <option value="images/lena.bmp">lena</option>
