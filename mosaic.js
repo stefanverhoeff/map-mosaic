@@ -102,7 +102,7 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
         }
     };
 
-    var fetchTileAndSplit = function (url) {
+    var fetchTileAndSplit = function (url) {   
         var sourceMapTile;
         var targetTile;
         var x, y;
@@ -110,7 +110,7 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
         statusMessage('Splitting map tiles');
 
         sourceMapTile = new Image();
-	sourceMapTile.crossOrigin = "anonymous";
+        sourceMapTile.crossOrigin = "anonymous";
         sourceMapTile.src = url;
 
         sourceMapTile.onload = function () {
