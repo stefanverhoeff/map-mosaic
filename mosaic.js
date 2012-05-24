@@ -3,6 +3,7 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
  
     // 128 or 256
     var sourceTileSize = 128;
+    var sourceTileSizeAdjusted;
     // Must be divide-able by source size
     var targetTileSize;
     var tilesPerSourceTile;
@@ -30,20 +31,24 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
 
     var readSourceImageData = function () {
         var x, y;
+        var width, height;
 
-        statusMessage('Reading source image');
+        statusMessage('Reading source image for tiles size ' + targetTileSize);
 
         sourceImageTiles = [];
 
-        scratchCanvas.width = sourceImage.width;
-        scratchCanvas.height = sourceImage.height;
+        width = sourceImage.width - (sourceImage.width % targetTileSize);
+        height = sourceImage.height - (sourceImage.height % targetTileSize);
+
+        scratchCanvas.width = width;
+        scratchCanvas.height = height;
         scratchCtx.drawImage(sourceImage, 0, 0);
 
         tilesLoaded = 0;
-        tilesTotal = (sourceImage.width / targetTileSize) * (sourceImage.height / targetTileSize);
+        tilesTotal = (width / targetTileSize) * (height / targetTileSize);
         resetProgress(tilesTotal);
-        for (x = 0; x * targetTileSize < sourceImage.width; ++x) {
-            for (y = 0; y * targetTileSize < sourceImage.height; ++y) {
+        for (x = 0; x * targetTileSize < width; ++x) {
+            for (y = 0; y * targetTileSize < height; ++y) {
                 (function (x, y) {
                     setTimeout(function () {
                         var imageTile = {};
@@ -101,8 +106,8 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
             scratchCanvas.height = sourceTileSize;
             scratchCtx.drawImage(sourceMapTile, 0, 0);
 
-            for (x = 0; x * targetTileSize < sourceTileSize; ++x) {
-                for (y = 0; y * targetTileSize < sourceTileSize; ++y) {
+            for (x = 0; x * targetTileSize < sourceTileSizeAdjusted; ++x) {
+                for (y = 0; y * targetTileSize < sourceTileSizeAdjusted; ++y) {
                     targetTile = {};
 
                     targetTile.imageData = scratchCtx.getImageData(x * targetTileSize, y * targetTileSize, targetTileSize, targetTileSize);
@@ -276,6 +281,7 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
     var start = function () {
         var timerStop = timerStart('read source image');
         initTileDisplay();
+        calculateDimensions();
 
         // Don't read source image again if we have the data already
         if (! sourceImageTiles) {
@@ -291,15 +297,20 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
         });
     };
 
+    var calculateDimensions = function () {
+            tileColumns = Math.floor(512 / targetTileSize);
+            tileRows = Math.floor(512 / targetTileSize);
+            sourceTileSizeAdjusted = sourceTileSize - (sourceTileSize % targetTileSize)
+            tilesPerSourceTile = (sourceTileSizeAdjusted / targetTileSize) * (sourceTileSizeAdjusted / targetTileSize);
+    };
+
     handlers.init({
         setTileType:function (type) {
             tileType = type;
         },
         setTargetTileSize:function (size) {
             targetTileSize = size;
-            tileColumns = Math.floor(512 / targetTileSize);
-            tileRows = Math.floor(512 / targetTileSize);
-            tilesPerSourceTile = (sourceTileSize / targetTileSize) * (sourceTileSize / targetTileSize);
+            calculateDimensions();
             sourceImageTiles = null;
         },
         setSourceImage:function (image) {
