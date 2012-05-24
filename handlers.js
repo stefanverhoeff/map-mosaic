@@ -19,15 +19,13 @@ define(['jquery'], function ($) {
             $('input[name=tileSize]').change(function () {
                 var size = parseInt(this.value, 10);
                 mosaic.setTargetTileSize(size);
-                $('#tileSizeValue').html(size);
-                $('#mapTilesToFetchMiniValue').html(mosaic.getMapTilesToFetch() * mosaic.getTilesPerSourceTile());
+                updateTileCounts();
             });
 
             $('input[name=mapTilesToFetch]').change(function () {
                 var size = parseInt(this.value, 10);
                 mosaic.setMapTilesToFetch(size);
-                $('#mapTilesToFetchValue').html(size);
-                $('#mapTilesToFetchMiniValue').html(mosaic.getMapTilesToFetch() * mosaic.getTilesPerSourceTile());
+                updateTileCounts();
             });
 
             $('input[name=tileType]').click(function () {
@@ -44,18 +42,29 @@ define(['jquery'], function ($) {
                 mosaic.start();
             });
 
+            var updateTileCounts = function () {
+                var imgWidth = $('#sourceImage')[0].width;
+                var imgHeight = $('#sourceImage')[0].height;
+                var sourceTilesMini = Math.floor((imgWidth / mosaic.getTargetTileSize()) * (imgHeight / mosaic.getTargetTileSize()));
+                var mapTilesMini = Math.floor(mosaic.getMapTilesToFetch() * mosaic.getTilesPerSourceTile());
+                $('#mapTilesToFetchValue').html(mosaic.getMapTilesToFetch());
+                $('#mapTilesToFetchMiniValue').html(mapTilesMini);
+                $('#tileSizeValue').html(mosaic.getTargetTileSize());
+                $('#sourceTilesMiniValue').html(sourceTilesMini);
+            };
+
             // Set initial values from input defaults
             var tileSize = parseInt($('input[name=tileSize]').attr('value'), 10);
             var tileType = $('input[name=tileType]').filter(':checked').attr('value');
             var sourceImage = $('#sourceImage')[0];
             var mapTilesToFetch = parseInt($('input[name=mapTilesToFetch]').attr('value'), 10);
 
-            $('#tileSize').html(tileSize);
-
             mosaic.setTargetTileSize(tileSize);
             mosaic.setTileType(tileType);
             mosaic.setSourceImage(sourceImage);
             mosaic.setMapTilesToFetch(mapTilesToFetch);
+
+            updateTileCounts();
         }
     };
 });

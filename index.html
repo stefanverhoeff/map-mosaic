@@ -42,15 +42,16 @@
     <br/><br/>
     <label>
         <input name="mapTilesToFetch" type="range" min="1" max="50" value="10" />
-        [<span id="mapTilesToFetchValue">10</span>]
-        Number for map tiles to fetch ([<span id="mapTilesToFetchMiniValue">640</span>]] mini-tiles)
+        [<span id="mapTilesToFetchValue"></span>]
+        Number for map tiles to fetch ([<span id="mapTilesToFetchMiniValue"></span>]] mini-tiles)
     </label>
 
     <br/><br/>
     <label>
-        <input name="tileSize" type="range" min="1" max="128" value="16" />
-        [<span id="tileSizeValue">16</span>]
-        Tile size
+        <input name="tileSize" type="range" min="1" max="64" value="16" />
+        [<span id="tileSizeValue"></span>]
+        Tile size ([<span id="sourceTilesMiniValue"></span>]] mini-tiles)
+
     </label>
 
     <br/><br/>
@@ -71,9 +72,7 @@
         <div id="statusMessage">..</div>
 
         <progress id="progress" value="0" max="0"></progress>
-        <p>
-             <span id="progress-value"></span> / <span id="progress-total"></span>
-         </p>
+        <span id="progress-value"></span> / <span id="progress-total"></span>
     </div>
 
     <br/><br/>
