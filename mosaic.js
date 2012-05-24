@@ -122,7 +122,6 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
 
     var calcTilesRankingAndDisplay = function () {
         var timerStop = timerStart('ranking');
-        statusMessage('Calculating tile ranking for ' + mapTiles.length + ' tiles');
 
         calcTilesRanking(mapTiles);
 
@@ -145,11 +144,12 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
         var timeStart = new Date().getTime();
         return function () {
             var now = new Date().getTime();
-            console.log(name + ' done in ' + (now - timeStart) + 'ms');
+            console.log('TIMER[' + name + '] done in ' + (now - timeStart) + 'ms');
         };
     };
 
     var calcTilesRanking = function (tilesToRank) {
+        statusMessage('Calculating tile ranking for ' + tilesToRank.length + ' tiles');
         resetProgress(tilesToRank.length);
         for (var i = 0; i < tilesToRank.length; ++i) {
             var tile = tilesToRank[i];
@@ -200,9 +200,9 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
                         var matchedTile = mapTiles[0];
                         matchedTile.score = -999;
 
-                        // Iterate map-tiles, find closest match for source tile
                         // TODO: this is the heavy loop, optimize here
                         for (var j = 0; j < mapTiles.length; ++j) {
+                            // Iterate map-tiles, find closest match for source tile
                             tileMatchScore = calcTileMatch(sourceImageTiles[i], mapTiles[j]);
 
                             if (tileMatchScore > matchedTile.score) {
@@ -276,13 +276,18 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
     var start = function () {
         var timerStop = timerStart('read source image');
         initTileDisplay();
-        readSourceImageData();
-        waitForProcessDone(function () {
-            timerStop();
-            calcTilesRanking(sourceImageTiles);
+
+        // Don't read source image again if we have the data already
+        if (! sourceImageTiles) {
+            readSourceImageData();
             waitForProcessDone(function () {
-                fetchMapTiles();
+                timerStop();
+                calcTilesRanking(sourceImageTiles);
             });
+        }
+
+        waitForProcessDone(function () {
+            fetchMapTiles();
         });
     };
 
@@ -295,9 +300,11 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
             tileColumns = Math.floor(512 / targetTileSize);
             tileRows = Math.floor(512 / targetTileSize);
             tilesPerSourceTile = (sourceTileSize / targetTileSize) * (sourceTileSize / targetTileSize);
+            sourceImageTiles = null;
         },
         setSourceImage:function (image) {
             sourceImage = image;
+            sourceImageTiles = null;
         },
         setMapTilesToFetch:function(number) {
             mapTilesToFetch = number;
@@ -307,6 +314,9 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
         },
         getTilesPerSourceTile:function () {
             return tilesPerSourceTile;
+        },
+        getTargetTileSize:function () {
+            return targetTileSize;
         },
         start:start
     });
