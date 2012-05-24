@@ -281,6 +281,7 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
     var start = function () {
         var timerStop = timerStart('read source image');
         initTileDisplay();
+        console.log('starting');
         calculateDimensions();
 
         // Don't read source image again if we have the data already
@@ -298,9 +299,11 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
     };
 
     var calculateDimensions = function () {
-            tileColumns = Math.floor(512 / targetTileSize);
-            tileRows = Math.floor(512 / targetTileSize);
-            sourceTileSizeAdjusted = sourceTileSize - (sourceTileSize % targetTileSize)
+        var width = sourceImage && sourceImage.width || 512;
+        var height = sourceImage && sourceImage.height || 512;
+        tileColumns = Math.floor(width / targetTileSize);
+        tileRows = Math.floor(height / targetTileSize);
+        sourceTileSizeAdjusted = sourceTileSize - (sourceTileSize % targetTileSize)
             tilesPerSourceTile = (sourceTileSizeAdjusted / targetTileSize) * (sourceTileSizeAdjusted / targetTileSize);
     };
 
@@ -315,6 +318,7 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
         },
         setSourceImage:function (image) {
             sourceImage = image;
+            calculateDimensions();
             sourceImageTiles = null;
         },
         setMapTilesToFetch:function(number) {
