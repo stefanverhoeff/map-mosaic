@@ -34,6 +34,12 @@ define(['jquery'], function ($) {
                 mosaic.setTileType(this.value);
             });
 
+            $('#mapCanvas').click(function () {
+                var sourceImageName = $('#test-image').attr('value');
+                var tileSize = $('input[name=tileSize]').attr('value');
+                window.open(this.toDataURL("image/png"), 'mosaic-' + sourceImageName + '-' + tileSize + 'x' + tileSize);
+            });
+
             $('#go-button').click(function () {
                 mosaic.start();
             });

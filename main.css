@@ -18,6 +18,10 @@
     border: 3px solid black;
 }
 
+#mapCanvas {
+    cursor: pointer;
+}
+
 #tiles img {
     float:left;
 }
