@@ -30,7 +30,7 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
     };
 
     var readSourceImageData = function () {
-        var x, y;
+        var col, row;
         var width, height;
 
         statusMessage('Reading source image for tiles size ' + targetTileSize);
@@ -47,20 +47,20 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
         tilesLoaded = 0;
         tilesTotal = (width / targetTileSize) * (height / targetTileSize);
         resetProgress(tilesTotal);
-        for (x = 0; x * targetTileSize < width; ++x) {
-            for (y = 0; y * targetTileSize < height; ++y) {
-                (function (x, y) {
+        for (col = 0; col * targetTileSize < width; ++col) {
+            for (row = 0; row * targetTileSize < height; ++row) {
+                (function (col, row) {
                     setTimeout(function () {
                         var imageTile = {};
 
-                        imageTile.x = x * targetTileSize;
-                        imageTile.y = y * targetTileSize;
-                        imageTile.imageData = scratchCtx.getImageData(y * targetTileSize, x * targetTileSize, targetTileSize, targetTileSize);
+                        imageTile.x = col * targetTileSize;
+                        imageTile.y = row * targetTileSize;
+                        imageTile.imageData = scratchCtx.getImageData(row * targetTileSize, col * targetTileSize, targetTileSize, targetTileSize);
 
                         sourceImageTiles.push(imageTile);
                         increaseProgress();
                     }, 10);
-                })(x, y);
+                })(col, row);
             }
         }
     };
