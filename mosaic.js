@@ -89,7 +89,7 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
         var timerStop = timerStart('fetching');
         statusMessage('Fetching and splitting ' + mapTilesToFetch + ' tiles of ' + sourceTileSize + 'px from server');
 
-        if (mapTiles) {
+        if (! mapTiles) {
             tilesTotal = tileColumns * tileRows;
             tilesLoaded = 0;
             mapTiles = [];
