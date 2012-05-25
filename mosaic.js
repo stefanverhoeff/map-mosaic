@@ -21,8 +21,24 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
     var sourceImage;
     var progressValue;
     var progressTotal;
+    var rankingFunc;
+    var matchingFunc;
+    var matchingFuncs = {
+        calcAvgColor: function (imageTile, mapTile) {
+            return -Math.abs(imageTile.ranking - mapTile.ranking);
+        },
 
-    var rankingFunc = rankingFuncs.calcAvgColor;
+        calcAllColors: function (imageTile, mapTile) {
+           var matchScore = 100 * (
+               1.0 - ((
+                           Math.abs(imageTile.ranking[0] - mapTile.ranking[0]) +
+                           Math.abs(imageTile.ranking[1] - mapTile.ranking[1]) +
+                           Math.abs(imageTile.ranking[2] - mapTile.ranking[2])
+                          ) / (256.0 * 3))
+                   );
+           return matchScore;
+        }
+    };
 
     var statusMessage = function (message) {
         console.log(message);
@@ -208,7 +224,7 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
                         // TODO: this is the heavy loop, optimize here
                         for (var j = 0; j < mapTiles.length; ++j) {
                             // Iterate map-tiles, find closest match for source tile
-                            tileMatchScore = calcTileMatch(sourceImageTiles[i], mapTiles[j]);
+                            tileMatchScore = matchingFunc(sourceImageTiles[i], mapTiles[j]);
 
                             if (tileMatchScore > matchedTile.score) {
                                 matchedTile = mapTiles[j];
@@ -238,19 +254,6 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
         }
     };
 
-    var calcTileMatch = function (imageTile, mapTile) {
-        return -Math.abs(imageTile.ranking - mapTile.ranking);
-    };
-
-    var calcTileMatchRGB = function (imageTile, mapTile) {
-        return 100 * (
-            1.0 - ((
-                Math.Abs(imageTile.ranking[0] - mapTile.ranking[0]) +
-                    Math.Abs(imageTile.ranking[1] - mapTile.ranking[1]) +
-                    Math.Abs(imageTile.ranking[2] - mapTile.ranking[2])
-            ) / (256.0 * 3))
-        );
-    };
 
     var resetProgress = function (total) {
         progressValue = 0;
@@ -323,6 +326,11 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
         },
         setMapTilesToFetch:function(number) {
             mapTilesToFetch = number;
+        },
+        setRankingFunc:function(rankingFuncName) {
+            rankingFunc = rankingFuncs[rankingFuncName];
+            matchingFunc = matchingFuncs[rankingFuncName];
+            sourceImageTiles = null;
         },
         getMapTilesToFetch:function () {
             return mapTilesToFetch;

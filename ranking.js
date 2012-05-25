@@ -20,7 +20,9 @@ define(function () {
             var i, red = 0, green = 0, blue = 0;
 
             for (i = 0; i < data.length; i += 4) {
-                red += data[i] - (data[i + 1] + data[i + 2]) / 2;
+                red += data[i] -  data[i + 3];
+                green += data[i + 1] - data[i + 3];
+                blue += data[i + 2] - data[i + 3];
             }
 
             return [red / (data.length / 4),

@@ -58,11 +58,13 @@ define(['jquery'], function ($) {
             var tileType = $('input[name=tileType]').filter(':checked').attr('value');
             var sourceImage = $('#sourceImage')[0];
             var mapTilesToFetch = parseInt($('input[name=mapTilesToFetch]').attr('value'), 10);
+            var rankingFunc = $('input[name=algorithm]').filter(':checked').attr('value');
 
             mosaic.setTargetTileSize(tileSize);
             mosaic.setTileType(tileType);
             mosaic.setSourceImage(sourceImage);
             mosaic.setMapTilesToFetch(mapTilesToFetch);
+            mosaic.setRankingFunc(rankingFunc);
 
             updateTileCounts();
         }
