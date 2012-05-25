@@ -89,15 +89,17 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
         var timerStop = timerStart('fetching');
         statusMessage('Fetching and splitting ' + mapTilesToFetch + ' tiles of ' + sourceTileSize + 'px from server');
 
-        tilesTotal = tileColumns * tileRows;
-        tilesLoaded = 0;
-        mapTiles = [];
+        if (mapTiles) {
+            tilesTotal = tileColumns * tileRows;
+            tilesLoaded = 0;
+            mapTiles = [];
 
-        $('#raw-tiles').empty();
-        resetProgress(mapTilesToFetch * tilesPerSourceTile);
-        for (var i=0; i < mapTilesToFetch; ++i) {
-            var tileUrl = nokiaMap.getTileUrl(15, 17640 + util.getRandomInt(-100, 100), 10755 + util.getRandomInt(-100, 100), sourceTileSize, tileType);
-            fetchMapTileAndSplit(tileUrl);
+            $('#raw-tiles').empty();
+            resetProgress(mapTilesToFetch * tilesPerSourceTile);
+            for (var i=0; i < mapTilesToFetch; ++i) {
+                var tileUrl = nokiaMap.getTileUrl(15, 17640 + util.getRandomInt(-100, 100), 10755 + util.getRandomInt(-100, 100), sourceTileSize, tileType);
+                fetchMapTileAndSplit(tileUrl);
+            }
         }
 
         waitForProcessDone(function () {
@@ -313,11 +315,13 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
     handlers.init({
         setTileType:function (type) {
             tileType = type;
+            mapTiles = null;
         },
         setTargetTileSize:function (size) {
             targetTileSize = size;
             calculateDimensions();
             sourceImageTiles = null;
+            mapTiles = null;
         },
         setSourceImage:function (image) {
             sourceImage = image;
@@ -326,6 +330,7 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
         },
         setMapTilesToFetch:function(number) {
             mapTilesToFetch = number;
+            mapTiles = null;
         },
         setRankingFunc:function(rankingFuncName) {
             rankingFunc = rankingFuncs[rankingFuncName];
