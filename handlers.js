@@ -39,6 +39,12 @@ define(['jquery'], function ($) {
             });
 
             $('#go-button').click(function () {
+                mosaic.setMapTilesRefetchEnabled(false);
+                mosaic.start();
+            });
+
+            $('#go-button-new-tiles').click(function () {
+                mosaic.setMapTilesRefetchEnabled(true);
                 mosaic.start();
             });
 

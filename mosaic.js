@@ -23,6 +23,7 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
     var progressTotal;
     var rankingFunc;
     var matchingFunc;
+    var mapTilesRefetchEnabled;
     var matchingFuncs = {
         calcAvgColor: function (imageTile, mapTile) {
             return -Math.abs(imageTile.ranking - mapTile.ranking);
@@ -89,7 +90,7 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
         var timerStop = timerStart('fetching');
         statusMessage('Fetching and splitting ' + mapTilesToFetch + ' tiles of ' + sourceTileSize + 'px from server');
 
-        if (! mapTiles) {
+        if (mapTilesRefetchEnabled || ! mapTiles) {
             tilesTotal = tileColumns * tileRows;
             tilesLoaded = 0;
             mapTiles = [];
@@ -336,6 +337,9 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
             rankingFunc = rankingFuncs[rankingFuncName];
             matchingFunc = matchingFuncs[rankingFuncName];
             sourceImageTiles = null;
+        },
+        setMapTilesRefetchEnabled:function(enabled) {
+            mapTilesRefetchEnabled = enabled;
         },
         getMapTilesToFetch:function () {
             return mapTilesToFetch;
