@@ -4,7 +4,6 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
     // 128 or 256
     var sourceTileSize = 128;
     var sourceTileSizeAdjusted;
-    // Must be divide-able by source size
     var targetTileSize;
     var tilesPerSourceTile;
     var tileColumns;
@@ -50,7 +49,7 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
         var col, row;
         var width, height;
 
-        statusMessage('Reading source image for tiles size ' + targetTileSize);
+        statusMessage('Reading source image ' + sourceImage.src + ' for tiles size ' + targetTileSize);
 
         sourceImageTiles = [];
 
@@ -70,9 +69,9 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
                     setTimeout(function () {
                         var imageTile = {};
 
-                        imageTile.x = col * targetTileSize;
-                        imageTile.y = row * targetTileSize;
-                        imageTile.imageData = scratchCtx.getImageData(row * targetTileSize, col * targetTileSize, targetTileSize, targetTileSize);
+                        imageTile.col = col * targetTileSize;
+                        imageTile.row = row * targetTileSize;
+                        imageTile.imageData = scratchCtx.getImageData(col * targetTileSize, row * targetTileSize, targetTileSize, targetTileSize);
 
                         sourceImageTiles.push(imageTile);
                         increaseProgress();
@@ -180,11 +179,8 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
             // A-sync so progress update can be seen
             (function (theTile) {
                 setTimeout(function () {
-                    var now;
                     theTile.ranking = calcTileRanking(theTile);
-                    
                     increaseProgress();
-
                 }, 10);
             })(tile);
         }
@@ -248,11 +244,11 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
 
         statusMessage('Rendering result');
 
-        for (row=0; row < tileRows; ++row) {
-            for (column=0; column < tileColumns; ++column) {
-                tile = mosaicTiles[(row*tileRows) + column];
+        for (column=0; column < tileColumns; ++column) {
+            for (row=0; row < tileRows; ++row) {
+                tile = mosaicTiles[(column*tileRows) + row];
 
-                displayCanvas.renderTile(tile, targetTileSize, row, column);
+                displayCanvas.renderTile(tile, targetTileSize, column, row);
             }
         }
     };
@@ -309,7 +305,7 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
         var height = sourceImage && sourceImage.height || 512;
         tileColumns = Math.floor(width / targetTileSize);
         tileRows = Math.floor(height / targetTileSize);
-        sourceTileSizeAdjusted = sourceTileSize - (sourceTileSize % targetTileSize)
+        sourceTileSizeAdjusted = sourceTileSize - (sourceTileSize % targetTileSize);
             tilesPerSourceTile = (sourceTileSizeAdjusted / targetTileSize) * (sourceTileSizeAdjusted / targetTileSize);
     };
 
@@ -352,6 +348,4 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
         },
         start:start
     });
-
-    start();
 });

@@ -14,7 +14,7 @@ define(['jquery'], function ($) {
         $('#mapCanvas').hide();
     };
 
-    var renderTile = function (tile, tileSize, row, column) {
+    var renderTile = function (tile, tileSize, column, row) {
         var left = column * tileSize;
         var top = row * tileSize;
 
