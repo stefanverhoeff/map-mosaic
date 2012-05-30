@@ -6,6 +6,7 @@ define(['jquery'], function ($) {
             $('#test-image').change(function () {
                 var sourceImage;
                 $('#sourceImage').attr('src', this.value);
+                $('#sourceImage').off('load');
                 $('#sourceImage').load(function () {
                     sourceImage = $('#sourceImage')[0];
                     mosaic.setSourceImage(sourceImage);
