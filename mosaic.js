@@ -49,7 +49,7 @@ require(['jquery', 'lib/nokia-map', 'util', 'ranking', 'handlers', 'display-canv
         var col, row;
         var width, height;
 
-        statusMessage('Reading source image ' + sourceImage.src + ' for tiles size ' + targetTileSize);
+        statusMessage('Reading source image for tiles size ' + targetTileSize);
 
         sourceImageTiles = [];
 

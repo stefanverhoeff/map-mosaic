@@ -49,6 +49,16 @@ define(['jquery'], function ($) {
                 mosaic.start();
             });
 
+	    $('input[name=uploadImage]').change(function () {
+		var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#sourceImage').attr('src', e.target.result);
+                }
+
+                reader.readAsDataURL(this.files[0]);
+	    });
+
             var updateTileCounts = function () {
                 var imgWidth = $('#sourceImage')[0].width;
                 var imgHeight = $('#sourceImage')[0].height;

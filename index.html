@@ -44,7 +44,7 @@
     <!---->
     <br/><br/>
     <label>
-        <input name="mapTilesToFetch" type="range" min="1" max="50" value="10" />
+        <input name="mapTilesToFetch" type="range" min="1" max="100" value="10" />
         [<span id="mapTilesToFetchValue"></span>]
         Number for map tiles to fetch ([<span id="mapTilesToFetchMiniValue"></span>] mini-tiles)
     </label>
@@ -55,6 +55,11 @@
         [<span id="tileSizeValue"></span>]
         Tile size ([<span id="sourceTilesMiniValue"></span>] mini-tiles)
 
+    </label>
+
+    <br/><br/>
+    <label>
+        <input type="file" name="uploadImage" accept="image/*" />
     </label>
 
     <br/><br/>
@@ -101,7 +106,7 @@
 </div>
 
 <div id="input-image">
-    <h3>Source image</h3>
+	<h3>Source image</h3>
     <img id="sourceImage" />
 </div>
 
