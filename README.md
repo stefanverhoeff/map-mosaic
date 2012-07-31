@@ -5,6 +5,8 @@ Stefan Verhoeff
 
 This app will read in an uploaded image and create a mosaic image based on it composed of map tiles. You would be able to render your avatar with tiles from a chosen city.
 
+[Try out the latest map-mosaic snapshot online](http://stefanverhoeff.github.com/map-mosaic/)
+
 Planning to use:
 - Canvas
 - Nokia Map API api.maps.nokia.com
